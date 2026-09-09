@@ -5,27 +5,47 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h2>Secure Mail Console</h2>
-    <form method="POST">
-        <label>Sender Name:</label>
-        <input type="text" name="sender_name" placeholder="E.g., John Doe" required><br>
+<div class="container">
+    <div class="compose">
+        <h2>Compose Message</h2>
+        <form method="POST">
+            <label>Sender Name:</label>
+            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
 
-        <label>Your Gmail:</label>
-        <input type="email" name="gmail_user" placeholder="you@gmail.com" required><br>
+            <label>Your Gmail:</label>
+            <input type="email" name="gmail_user" placeholder="you@gmail.com" required>
 
-        <label>App Password:</label>
-        <input type="password" name="app_password" placeholder="16-digit app password" required><br>
+            <label>App Password:</label>
+            <input type="password" name="app_password" placeholder="16-char app password" required>
 
-        <label>Email Subject:</label>
-        <input type="text" name="subject" placeholder="Enter subject line..." required><br>
+            <label>Email Subject:</label>
+            <input type="text" name="subject" placeholder="Enter subject line..." required>
 
-        <label>Message Body:</label>
-        <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea><br>
+            <label>Message Body (Plain Text):</label>
+            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
-        <label>Recipients (one per line):</label>
-        <textarea name="recipients" rows="6" placeholder="Paste emails here..." required></textarea><br>
+            <div class="spam-box">
+                <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
+                <p class="warn">For testing only. If seen, report to site owner.</p>
+            </div>
 
-        <button type="submit">Send All</button>
-    </form>
+            <label>Recipients:</label>
+            <textarea name="recipients" rows="6" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
+
+            <button type="submit" class="send-btn">Send All ✈</button>
+        </form>
+    </div>
+
+    <div class="progress">
+        <h2>Progress Monitor</h2>
+        <div class="counters">
+            <div class="box total">TOTAL: {{ total }}</div>
+            <div class="box sent">SENT: {{ sent }}</div>
+            <div class="box failed">FAILED: {{ failed }}</div>
+            <div class="box remaining">REMAINING: {{ remaining }}</div>
+        </div>
+        <p class="status">{{ status }}</p>
+    </div>
+</div>
 </body>
 </html>
