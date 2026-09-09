@@ -7,21 +7,21 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    total = sent_count = fail_count = remaining = 0
+    status = "Ready to send"
+
     if request.method == "POST":
         sender_name = request.form["sender_name"]
         gmail_user = request.form["gmail_user"]
         app_password = request.form["app_password"]
         subject = request.form["subject"]
         body = request.form["body"]
-        recipients = request.form["recipients"].splitlines()
+        recipients = request.form["recipients"].replace(",", "\n").splitlines()
 
+        recipients = [r.strip() for r in recipients if r.strip()]
         total = len(recipients)
-        sent_count, fail_count = 0, 0
 
         for recipient in recipients:
-            recipient = recipient.strip()
-            if not recipient:
-                continue
             try:
                 msg = MIMEMultipart()
                 msg["From"] = f"{sender_name} <{gmail_user}>"
@@ -40,9 +40,14 @@ def index():
                 fail_count += 1
 
         remaining = total - (sent_count + fail_count)
-        return f"TOTAL: {total}, SENT: {sent_count}, FAILED: {fail_count}, REMAINING: {remaining}"
+        status = "Completed sending"
 
-    return render_template("index.html")
+    return render_template("index.html",
+                           total=total,
+                           sent=sent_count,
+                           failed=fail_count,
+                           remaining=remaining,
+                           status=status)
 
 if __name__ == "__main__":
     app.run(debug=True)
