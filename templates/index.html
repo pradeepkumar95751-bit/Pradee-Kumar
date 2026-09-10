@@ -6,24 +6,23 @@
 </head>
 <body>
 <div class="container">
-    <!-- Left Column: Compose Message -->
     <div class="compose">
         <h2>Compose Message</h2>
-        <form method="POST">
+        <form id="mailForm">
             <label>Sender Name:</label>
-            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
+            <input type="text" name="sender_name" required>
 
             <label>Your Gmail:</label>
-            <input type="email" name="gmail_user" placeholder="you@gmail.com" required>
+            <input type="email" name="gmail_user" required>
 
             <label>App Password:</label>
-            <input type="password" name="app_password" placeholder="16-char app password" required>
+            <input type="password" name="app_password" required>
 
             <label>Email Subject:</label>
-            <input type="text" name="subject" placeholder="Enter subject line..." required>
+            <input type="text" name="subject" required>
 
-            <label>Message Body (Plain Text):</label>
-            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
+            <label>Message Body:</label>
+            <textarea name="body" rows="6" required></textarea>
 
             <div class="spam-box">
                 <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
@@ -31,23 +30,44 @@
             </div>
 
             <label>Recipients:</label>
-            <textarea name="recipients" rows="6" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
+            <textarea name="recipients" rows="6" required></textarea>
 
             <button type="submit" class="send-btn">Send All ✈</button>
         </form>
     </div>
 
-    <!-- Right Column: Progress Monitor -->
     <div class="progress">
         <h2>Progress Monitor</h2>
         <div class="counters">
-            <div class="box total">TOTAL: {{ total }}</div>
-            <div class="box sent">SENT: {{ sent }}</div>
-            <div class="box failed">FAILED: {{ failed }}</div>
-            <div class="box remaining">REMAINING: {{ remaining }}</div>
+            <div class="box total">TOTAL: <span id="total">0</span></div>
+            <div class="box sent">SENT: <span id="sent">0</span></div>
+            <div class="box failed">FAILED: <span id="failed">0</span></div>
+            <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
         </div>
-        <p class="status">{{ status }}</p>
+        <p class="status" id="status">Ready to send</p>
     </div>
 </div>
+
+<script>
+document.getElementById("mailForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch("/send", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(update => {
+            document.getElementById("total").innerText = update.total;
+            document.getElementById("sent").innerText = update.sent;
+            document.getElementById("failed").innerText = update.failed;
+            document.getElementById("remaining").innerText = update.remaining;
+            document.getElementById("status").innerText = update.status + " → " + update.recipient;
+        });
+    });
+});
+</script>
 </body>
 </html>
