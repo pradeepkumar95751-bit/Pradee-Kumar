@@ -22,8 +22,6 @@ def send():
     total = len(recipients)
     sent_count = fail_count = 0
 
-    results = []
-
     for recipient in recipients:
         try:
             msg = MIMEMultipart()
@@ -38,22 +36,17 @@ def send():
             server.sendmail(gmail_user, recipient, msg.as_string())
             server.quit()
             sent_count += 1
-            status = "Sent"
         except Exception as e:
             fail_count += 1
-            status = f"Failed: {e}"
 
-        remaining = total - (sent_count + fail_count)
-        results.append({
-            "recipient": recipient,
-            "sent": sent_count,
-            "failed": fail_count,
-            "remaining": remaining,
-            "total": total,
-            "status": status
-        })
-
-    return jsonify(results)
+    remaining = total - (sent_count + fail_count)
+    return jsonify({
+        "total": total,
+        "sent": sent_count,
+        "failed": fail_count,
+        "remaining": remaining,
+        "status": "Completed sending"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
