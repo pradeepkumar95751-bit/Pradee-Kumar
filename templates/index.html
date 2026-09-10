@@ -6,23 +6,24 @@
 </head>
 <body>
 <div class="container">
+    <!-- Left Column: Compose Message -->
     <div class="compose">
         <h2>Compose Message</h2>
         <form id="mailForm">
             <label>Sender Name:</label>
-            <input type="text" name="sender_name" required>
+            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
 
             <label>Your Gmail:</label>
-            <input type="email" name="gmail_user" required>
+            <input type="email" name="gmail_user" placeholder="you@gmail.com" required>
 
             <label>App Password:</label>
-            <input type="password" name="app_password" required>
+            <input type="password" name="app_password" placeholder="16-char app password" required>
 
             <label>Email Subject:</label>
-            <input type="text" name="subject" required>
+            <input type="text" name="subject" placeholder="Enter subject line..." required>
 
-            <label>Message Body:</label>
-            <textarea name="body" rows="6" required></textarea>
+            <label>Message Body (Plain Text):</label>
+            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
             <div class="spam-box">
                 <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
@@ -30,12 +31,13 @@
             </div>
 
             <label>Recipients:</label>
-            <textarea name="recipients" rows="6" required></textarea>
+            <textarea name="recipients" rows="6" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
 
-            <button type="submit" class="send-btn">Send All ✈</button>
+            <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
         </form>
     </div>
 
+    <!-- Right Column: Progress Monitor -->
     <div class="progress">
         <h2>Progress Monitor</h2>
         <div class="counters">
@@ -52,6 +54,9 @@
 document.getElementById("mailForm").addEventListener("submit", function(e){
     e.preventDefault();
     const formData = new FormData(this);
+    const sendBtn = document.getElementById("sendBtn");
+    sendBtn.disabled = true; // disable button while sending
+    document.getElementById("status").innerText = "Sending...";
 
     fetch("/send", {
         method: "POST",
@@ -59,13 +64,21 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
     })
     .then(res => res.json())
     .then(data => {
-        data.forEach(update => {
-            document.getElementById("total").innerText = update.total;
-            document.getElementById("sent").innerText = update.sent;
-            document.getElementById("failed").innerText = update.failed;
-            document.getElementById("remaining").innerText = update.remaining;
-            document.getElementById("status").innerText = update.status + " → " + update.recipient;
-        });
+        document.getElementById("total").innerText = data.total;
+        document.getElementById("sent").innerText = data.sent;
+        document.getElementById("failed").innerText = data.failed;
+        document.getElementById("remaining").innerText = data.remaining;
+        document.getElementById("status").innerText = data.status;
+
+        // popup alert after completion
+        alert(`Mail sending completed!\nTotal: ${data.total}\nSent: ${data.sent}\nFailed: ${data.failed}\nRemaining: ${data.remaining}`);
+
+        sendBtn.disabled = false; // enable button again
+    })
+    .catch(err => {
+        document.getElementById("status").innerText = "Error occurred!";
+        alert("Error: " + err);
+        sendBtn.disabled = false;
     });
 });
 </script>
