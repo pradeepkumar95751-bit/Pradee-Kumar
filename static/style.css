@@ -46,6 +46,11 @@ input, textarea {
     background: #218838;
 }
 
+.send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
 .spam-box {
     background: #e9ffe9;
     border: 1px solid #28a745;
