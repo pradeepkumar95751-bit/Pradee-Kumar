@@ -5,10 +5,9 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="container">
-    <!-- Left Column: Compose Message -->
-    <div class="compose">
-        <h2>Compose Message</h2>
+<div class="center-container">
+    <div class="dashboard">
+        <h2>Bulk Email Sender</h2>
         <form id="mailForm">
             <label>Sender Name:</label>
             <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
@@ -22,37 +21,29 @@
             <label>Email Subject:</label>
             <input type="text" name="subject" placeholder="Enter subject line..." required>
 
-            <label>Message Body (Plain Text):</label>
+            <label>Message Body:</label>
             <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
             <div class="spam-box">
                 <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
                 <p class="warn">For testing only. If seen, report to site owner.</p>
             </div>
-        </form>
-    </div>
 
-    <!-- Right Column -->
-    <div class="right-column">
-        <!-- Recipients -->
-        <div class="recipients">
-            <h2>Recipients</h2>
-            <textarea name="recipients" form="mailForm" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
+            <label>Recipients:</label>
+            <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
             <p>Found: <span id="found">0</span></p>
-        </div>
 
-        <!-- Progress Monitor -->
-        <div class="progress">
-            <h2>Progress Monitor</h2>
-            <div class="counters">
-                <div class="box total">TOTAL: <span id="total">0</span></div>
-                <div class="box sent">SENT: <span id="sent">0</span></div>
-                <div class="box failed">FAILED: <span id="failed">0</span></div>
-                <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
-            </div>
-            <p class="status" id="status">Ready to send</p>
-            <button type="submit" form="mailForm" id="sendBtn" class="send-btn">Send All ✈</button>
+            <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
+        </form>
+
+        <!-- Counters directly below -->
+        <div class="counters">
+            <div class="box total">TOTAL: <span id="total">0</span></div>
+            <div class="box sent">SENT: <span id="sent">0</span></div>
+            <div class="box failed">FAILED: <span id="failed">0</span></div>
+            <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
         </div>
+        <p class="status" id="status">Ready to send</p>
     </div>
 </div>
 
