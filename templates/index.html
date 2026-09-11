@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Email Dashboard</title>
+    <title>Bulk Email Sender</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
             <label>Email Subject:</label>
             <input type="text" name="subject" placeholder="Enter subject line..." required>
 
-            <label>Message Body:</label>
+            <label>Message Body (Plain Text):</label>
             <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
             <div class="spam-box">
@@ -49,9 +49,6 @@
                 <div class="box sent">SENT: <span id="sent">0</span></div>
                 <div class="box failed">FAILED: <span id="failed">0</span></div>
                 <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
-            </div>
-            <div class="progress-bar">
-                <div id="bar"></div>
             </div>
             <p class="status" id="status">Ready to send</p>
             <button type="submit" form="mailForm" id="sendBtn" class="send-btn">Send All ✈</button>
@@ -84,9 +81,6 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
             document.getElementById("failed").innerText = update.failed;
             document.getElementById("remaining").innerText = update.remaining;
             document.getElementById("status").innerText = update.status + " → " + update.recipient;
-
-            const progress = (update.sent + update.failed) / update.total * 100;
-            document.getElementById("bar").style.width = progress + "%";
         });
 
         alert("Mail sending completed!");
