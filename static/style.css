@@ -59,8 +59,26 @@ input, textarea {
     cursor: not-allowed;
 }
 
-.spam-box {
-    background: #e9ffe9;
-    border: 1px solid #28a745;
+.counters {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.box {
+    flex: 1;
     padding: 10px;
-    margin
+    text-align: center;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.total { background: #cce5ff; }
+.sent { background: #d4edda; }
+.failed { background: #f8d7da; }
+.remaining { background: #fff3cd; }
+
+.status {
+    margin-top: 15px;
+    font-style: italic;
+}
