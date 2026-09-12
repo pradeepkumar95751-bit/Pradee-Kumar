@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Email Sender Meter</title>
+    <title>Bulk Email Sender</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <div class="center-container">
     <div class="dashboard">
-        <h2>Email Sender</h2>
+        <h2>Bulk Email Sender</h2>
         <form id="mailForm">
             <label>Sender Name:</label>
-            <input type="text" name="sender_name" required>
+            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
 
             <label>Your Gmail:</label>
-            <input type="email" name="gmail_user" required>
+            <input type="email" name="gmail_user" placeholder="you@gmail.com" required>
 
             <label>App Password:</label>
-            <input type="password" name="app_password" required>
+            <input type="password" name="app_password" placeholder="16-char app password" required>
 
             <label>Email Subject:</label>
-            <input type="text" name="subject" required>
+            <input type="text" name="subject" placeholder="Enter subject line..." required>
 
             <label>Message Body:</label>
-            <textarea name="body" rows="6" required></textarea>
+            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
+
+            <div class="spam-box">
+                <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
+                <p class="warn">For testing only. If seen, report to site owner.</p>
+            </div>
 
             <label>Recipients:</label>
-            <textarea name="recipients" rows="6" id="recipients" required></textarea>
+            <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
             <p>Found: <span id="found">0</span></p>
 
             <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
         </form>
 
+        <!-- Counters directly below -->
         <div class="counters">
             <div class="box total">TOTAL: <span id="total">0</span></div>
             <div class="box sent">SENT: <span id="sent">0</span></div>
@@ -38,20 +44,6 @@
             <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
         </div>
         <p class="status" id="status">Ready to send</p>
-
-        <!-- Spam Protection Box -->
-        <div id="spamProtection" class="spam-protection" style="display:none;">
-            <div class="spam-header">Spam Protection</div>
-            <div id="spamStatus" class="spam-success">✔ Success!</div>
-            <div id="spamNote" class="spam-note">Inbox safe</div>
-            <div class="spam-footer">CLOUDFLARE • Privacy • Help</div>
-
-            <!-- Spam Score Meter -->
-            <div class="spam-meter">
-                <div id="spamMeterBar" class="spam-meter-bar"></div>
-            </div>
-            <p id="spamMeterText">Spam Score: 0</p>
-        </div>
     </div>
 </div>
 
@@ -74,41 +66,6 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
     })
     .then(res => res.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-            document.getElementById("status").innerText = "Spam protection triggered!";
-            sendBtn.disabled = false;
-            return;
-        }
-
-        // Show spam protection box after sending
-        document.getElementById("spamProtection").style.display = "block";
-        let score = data[0].spam_score;
-
-        // Update meter bar
-        const meterBar = document.getElementById("spamMeterBar");
-        const meterText = document.getElementById("spamMeterText");
-        let percent = Math.min(score * 10, 100);
-        meterBar.style.width = percent + "%";
-        meterText.innerText = "Spam Score: " + score;
-
-        if (score <= 3) {
-            document.getElementById("spamStatus").innerText = "✔ Success!";
-            document.getElementById("spamNote").innerText = "Inbox safe";
-            document.getElementById("spamStatus").className = "spam-success";
-            meterBar.style.background = "green";
-        } else if (score <= 7) {
-            document.getElementById("spamStatus").innerText = "⚠ Warning!";
-            document.getElementById("spamNote").innerText = "Moderate spam risk";
-            document.getElementById("spamStatus").className = "spam-warning";
-            meterBar.style.background = "orange";
-        } else {
-            document.getElementById("spamStatus").innerText = "✖ High Risk!";
-            document.getElementById("spamNote").innerText = "Likely to go Spam";
-            document.getElementById("spamStatus").className = "spam-danger";
-            meterBar.style.background = "red";
-        }
-
         data.forEach(update => {
             document.getElementById("total").innerText = update.total;
             document.getElementById("sent").innerText = update.sent;
