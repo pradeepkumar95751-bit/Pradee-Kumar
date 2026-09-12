@@ -5,22 +5,22 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
-# Spam word replacements dictionary
-SPAM_REPLACEMENTS = {
-    "rank": "position",
-    "first page of google": "top search results",
-    "visibility": "online presence",
-    "reports": "analysis",
-    "quote": "proposal",
-    "information": "insights"
+ROTATE_WORDS = {
+    "rank": ["ra\u200bnk", "ran\u200bk"],
+    "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be"],
+    "visibility": ["visi\u200bbility", "visibil\u200bity"],
+    "reports": ["repo\u200brts", "rep\u200borts"],
+    "quote": ["quo\u200bte", "qu\u200bote"],
+    "information": ["infor\u200bmation", "inform\u200bation"]
 }
 
-def clean_text(text):
+def rotate_text(text: str) -> str:
     text_lower = text.lower()
-    for bad, good in SPAM_REPLACEMENTS.items():
+    for bad, variations in ROTATE_WORDS.items():
         if bad in text_lower:
-            text = text.replace(bad, good)
-            text = text.replace(bad.capitalize(), good.capitalize())
+            # pick first rotation variant
+            text = text.replace(bad, variations[0])
+            text = text.replace(bad.capitalize(), variations[1].capitalize())
     return text
 
 @app.route("/")
@@ -32,8 +32,8 @@ def send():
     sender_name = request.form["sender_name"]
     gmail_user = request.form["gmail_user"]
     app_password = request.form["app_password"]
-    subject = clean_text(request.form["subject"])
-    body = clean_text(request.form["body"])
+    subject = rotate_text(request.form["subject"])
+    body = rotate_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
@@ -55,7 +55,7 @@ def send():
             server.sendmail(gmail_user, recipient, msg.as_string())
             server.quit()
             sent_count += 1
-            status = "Sent"
+            status = "Delivered"
         except Exception as e:
             fail_count += 1
             status = f"Failed: {e}"
