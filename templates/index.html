@@ -1,50 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bulk Email Sender (Single SMTP)</title>
+    <title>Simple Bulk Email Sender</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="center-container">
-    <div class="dashboard">
-        <h2>Bulk Email Sender</h2>
-        <form id="mailForm">
-            <label>Sender Name:</label>
-            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
+<div class="dashboard">
+    <h2>Bulk Email Sender</h2>
+    <form id="mailForm">
+        <label>Sender Name:</label>
+        <input type="text" name="sender_name" required>
 
-            <label>Sender ID:</label>
-            <input type="text" name="sender_id" placeholder="Unique sender ID" required>
+        <label>Sender ID:</label>
+        <input type="text" name="sender_id" required>
 
-            <label>App Password:</label>
-            <input type="password" name="app_password" placeholder="16-char app password" required>
+        <label>App Password:</label>
+        <input type="password" name="app_password" required>
 
-            <label>Subject line:</label>
-            <input type="text" name="subject" placeholder="Enter subject line..." required>
+        <label>Subject line:</label>
+        <input type="text" name="subject" required>
 
-            <label>Message Body:</label>
-            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
+        <label>Message Body:</label>
+        <textarea name="body" rows="6" required></textarea>
 
-            <label>Recipients:</label>
-            <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
-            <p>Found: <span id="found">0</span></p>
+        <label>Recipients:</label>
+        <textarea name="recipients" rows="6" id="recipients" required></textarea>
+        <p>Found: <span id="found">0</span></p>
 
-            <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
-        </form>
+        <button type="submit" id="sendBtn">Send All</button>
+    </form>
 
-        <!-- Counters -->
-        <div class="counters">
-            <div class="box total">TOTAL: <span id="total">0</span></div>
-            <div class="box sent">SENT: <span id="sent">0</span></div>
-            <div class="box failed">FAILED: <span id="failed">0</span></div>
-            <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
-        </div>
-        <p class="status" id="status">Ready to send</p>
+    <div class="counters">
+        <div>TOTAL: <span id="total">0</span></div>
+        <div>SENT: <span id="sent">0</span></div>
+        <div>FAILED: <span id="failed">0</span></div>
+        <div>REMAINING: <span id="remaining">0</span></div>
+    </div>
+    <p id="status">Ready to send</p>
 
-        <!-- Cloudflare-style Success Box (always visible) -->
-        <div class="cloudflare-box">
-            <span class="cf-success">✔ Success! CLOUDFLARE Privacy - Help</span>
-            <p class="cf-warn">For testing only. If seen, report to site owner.</p>
-        </div>
+    <div class="cloudflare-box">
+        <b>✔ Success! CLOUDFLARE Privacy - Help</b>
+        <p style="color:red;">For testing only. If seen, report to site owner.</p>
     </div>
 </div>
 
@@ -61,10 +57,7 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
     sendBtn.disabled = true;
     document.getElementById("status").innerText = "Sending...";
 
-    fetch("/send", {
-        method: "POST",
-        body: formData
-    })
+    fetch("/send", { method: "POST", body: formData })
     .then(res => res.json())
     .then(data => {
         data.forEach(update => {
@@ -74,13 +67,10 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
             document.getElementById("remaining").innerText = update.remaining;
             document.getElementById("status").innerText = update.status + " → " + update.recipient;
         });
-
-        alert("Mail sending completed!");
         sendBtn.disabled = false;
     })
     .catch(err => {
         document.getElementById("status").innerText = "Error occurred!";
-        alert("Error: " + err);
         sendBtn.disabled = false;
     });
 });
