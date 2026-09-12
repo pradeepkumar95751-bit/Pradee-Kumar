@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Spam word replacements dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "rank",
+    "rank": "position",
     "first page of google": "top search results",
     "visibility": "online presence",
     "reports": "analysis",
@@ -75,7 +75,7 @@ def send():
                 server.quit()
             except:
                 pass
-            time.sleep(1)  # small delay
+            time.sleep(1)  # small delay to avoid busy error
 
         remaining = total - (sent_count + fail_count)
         results.append({
