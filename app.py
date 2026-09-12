@@ -22,27 +22,24 @@ def send():
     sent_count = fail_count = 0
     results = []
 
-    smtp_config = {
-        "host": "smtp.example.com",
-        "port": 587,
-        "user": "youruser@example.com",
-        "password": "yourpassword"
-    }
+    smtp_host = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_user = sender_id   # Gmail address
+    smtp_pass = app_password  # 16-digit App Password
 
     try:
-        # Ek hi connection open karo
-        server = smtplib.SMTP(smtp_config["host"], smtp_config["port"])
+        server = smtplib.SMTP(smtp_host, smtp_port)
         server.starttls()
-        server.login(smtp_config["user"], smtp_config["password"])
+        server.login(smtp_user, smtp_pass)
 
         for recipient in recipients:
             try:
                 msg = MIMEText(body, "plain")
-                msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
+                msg["From"] = f"{sender_name} <{smtp_user}>"
                 msg["To"] = recipient
                 msg["Subject"] = subject
 
-                server.sendmail(smtp_config["user"], recipient, msg.as_string())
+                server.sendmail(smtp_user, recipient, msg.as_string())
                 sent_count += 1
                 status = "Sent"
             except Exception as e:
@@ -58,6 +55,8 @@ def send():
                 "remaining": remaining,
                 "status": status
             })
+    except Exception as e:
+        return jsonify([{"recipient":"ALL","total":total,"sent":sent_count,"failed":fail_count,"remaining":total,"status":f"Connection error: {e}"}])
     finally:
         try:
             server.quit()
