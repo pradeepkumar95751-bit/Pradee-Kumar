@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bulk Email Sender</title>
+    <title>Email Sender v2</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <div class="center-container">
     <div class="dashboard">
-        <h2>Bulk Email Sender</h2>
+        <h2>Email Sender</h2>
         <form id="mailForm">
             <label>Sender Name:</label>
-            <input type="text" name="sender_name" placeholder="E.g., John Doe" required>
+            <input type="text" name="sender_name" required>
 
             <label>Your Gmail:</label>
-            <input type="email" name="gmail_user" placeholder="you@gmail.com" required>
+            <input type="email" name="gmail_user" required>
 
             <label>App Password:</label>
-            <input type="password" name="app_password" placeholder="16-char app password" required>
+            <input type="password" name="app_password" required>
 
             <label>Email Subject:</label>
-            <input type="text" name="subject" placeholder="Enter subject line..." required>
+            <input type="text" name="subject" required>
 
             <label>Message Body:</label>
-            <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
+            <textarea name="body" rows="6" required></textarea>
 
             <div class="spam-box">
-                <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
-                <p class="warn">For testing only. If seen, report to site owner.</p>
+                <span class="success">✔ Safe Content Applied</span>
+                <p class="warn">Spam words auto-replaced</p>
             </div>
 
             <label>Recipients:</label>
-            <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
+            <textarea name="recipients" rows="6" id="recipients" required></textarea>
             <p>Found: <span id="found">0</span></p>
 
             <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
         </form>
 
-        <!-- Counters directly below -->
         <div class="counters">
             <div class="box total">TOTAL: <span id="total">0</span></div>
             <div class="box sent">SENT: <span id="sent">0</span></div>
