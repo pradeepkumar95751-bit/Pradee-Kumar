@@ -23,7 +23,7 @@ def send():
     results = []
 
     smtp_config = {
-        "host": "smtp.example.com",
+        "host": "smtp.gmail.com",
         "port": 587,
         "user": "youruser@example.com",
         "password": "yourpassword"
