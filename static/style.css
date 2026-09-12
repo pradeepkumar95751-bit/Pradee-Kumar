@@ -83,7 +83,7 @@ input, textarea {
     font-style: italic;
 }
 
-/* Cloudflare-style box */
+/* Cloudflare-style box (always visible) */
 .cloudflare-box {
     background: #e9ffe9;
     border: 1px solid #28a745;
