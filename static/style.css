@@ -74,33 +74,4 @@ input, textarea {
 }
 
 .total { background: #cce5ff; }
-.sent { background: #d4edda; }
-.failed { background: #f8d7da; }
-.remaining { background: #fff3cd; }
-
-.status {
-    margin-top: 15px;
-    font-style: italic;
-}
-
-/* Cloudflare-style box (always visible) */
-.cloudflare-box {
-    background: #e9ffe9;
-    border: 1px solid #28a745;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 6px;
-    text-align: left;
-}
-
-.cf-success {
-    color: green;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.cf-warn {
-    color: red;
-    font-size: 12px;
-}
+.sent
