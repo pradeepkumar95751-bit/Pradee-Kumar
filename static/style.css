@@ -59,25 +59,6 @@ input, textarea {
     cursor: not-allowed;
 }
 
-.spam-box {
-    background: #e9ffe9;
-    border: 1px solid #28a745;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 4px;
-    text-align: left;
-}
-
-.spam-box .success {
-    color: green;
-    font-weight: bold;
-}
-
-.spam-box .warn {
-    color: red;
-    font-size: 12px;
-}
-
 .counters {
     display: flex;
     gap: 10px;
@@ -100,4 +81,26 @@ input, textarea {
 .status {
     margin-top: 15px;
     font-style: italic;
+}
+
+/* Cloudflare-style box */
+.cloudflare-box {
+    background: #e9ffe9;
+    border: 1px solid #28a745;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    text-align: left;
+}
+
+.cf-success {
+    color: green;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.cf-warn {
+    color: red;
+    font-size: 12px;
 }
