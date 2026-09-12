@@ -19,13 +19,6 @@ SPAM_REPLACEMENTS = {
     "yahoo": "portal"
 }
 
-# Multiple SMTP servers (unique IPs)
-SMTP_SERVERS = [
-    {"host": "smtp1.example.com", "port": 587, "user": "user1@example.com", "password": "pass1"},
-    {"host": "smtp2.example.com", "port": 587, "user": "user2@example.com", "password": "pass2"},
-    {"host": "smtp3.example.com", "port": 587, "user": "user3@example.com", "password": "pass3"},
-]
-
 def clean_text(text):
     text_lower = text.lower()
     for bad, good in SPAM_REPLACEMENTS.items():
@@ -52,8 +45,15 @@ def send():
     sent_count = fail_count = 0
     results = []
 
-    for i, recipient in enumerate(recipients):
-        smtp_config = SMTP_SERVERS[i % len(SMTP_SERVERS)]
+    # Single SMTP config (rotation off)
+    smtp_config = {
+        "host": "smtp.example.com",
+        "port": 587,
+        "user": "youruser@example.com",
+        "password": "yourpassword"
+    }
+
+    for recipient in recipients:
         try:
             msg = MIMEMultipart()
             msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
@@ -65,18 +65,17 @@ def send():
             server.starttls()
             server.login(smtp_config["user"], smtp_config["password"])
             server.sendmail(smtp_config["user"], recipient, msg.as_string())
+            sent_count += 1
+            status = "Sent"
         except Exception as e:
             fail_count += 1
             status = f"Failed: {e}"
-        else:
-            sent_count += 1
-            status = f"Sent via {smtp_config['host']}"
         finally:
             try:
                 server.quit()
             except:
                 pass
-            time.sleep(1)  # small delay to avoid busy error
+            time.sleep(1)  # small delay
 
         remaining = total - (sent_count + fail_count)
         results.append({
