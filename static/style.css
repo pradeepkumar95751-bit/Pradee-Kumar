@@ -59,25 +59,49 @@ input, textarea {
     cursor: not-allowed;
 }
 
-.spam-box {
-    background: #e9ffe9;
+/* Spam Protection Box */
+.spam-protection {
     border: 1px solid #28a745;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 4px;
+    background: #f9fff9;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px #ccc;
     text-align: left;
+    font-family: Arial, sans-serif;
 }
 
-.spam-box .success {
+.spam-header {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.spam-success {
     color: green;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.spam-box .warn {
+.spam-warning {
+    color: orange;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.spam-note {
+    font-size: 13px;
+    margin-bottom: 8px;
     color: red;
-    font-size: 12px;
 }
 
+.spam-footer {
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+}
+
+/* Counters */
 .counters {
     display: flex;
     gap: 10px;
@@ -98,4 +122,6 @@ input, textarea {
 .remaining { background: #fff3cd; }
 
 .status {
-    margin
+    margin-top: 15px;
+    font-style: italic;
+}
