@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Email Sender</title>
+    <title>Email Sender Protected</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -23,6 +23,11 @@
 
             <label>Message Body:</label>
             <textarea name="body" rows="6" required></textarea>
+
+            <div class="spam-box">
+                <span class="success">✔ Spam Protection Active</span>
+                <p class="warn">Risky words auto-checked. Reduce if score high.</p>
+            </div>
 
             <label>Recipients:</label>
             <textarea name="recipients" rows="6" id="recipients" required></textarea>
@@ -60,6 +65,12 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
     })
     .then(res => res.json())
     .then(data => {
+        if (data.error) {
+            alert(data.error);
+            document.getElementById("status").innerText = "Spam protection triggered!";
+            sendBtn.disabled = false;
+            return;
+        }
         data.forEach(update => {
             document.getElementById("total").innerText = update.total;
             document.getElementById("sent").innerText = update.sent;
