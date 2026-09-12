@@ -19,6 +19,13 @@ SPAM_REPLACEMENTS = {
     "yahoo": "portal"
 }
 
+# Multiple SMTP servers (each with unique IP)
+SMTP_SERVERS = [
+    {"host": "smtp1.example.com", "port": 587, "user": "user1@example.com", "password": "pass1"},
+    {"host": "smtp2.example.com", "port": 587, "user": "user2@example.com", "password": "pass2"},
+    {"host": "smtp3.example.com", "port": 587, "user": "user3@example.com", "password": "pass3"},
+]
+
 def clean_text(text):
     text_lower = text.lower()
     for bad, good in SPAM_REPLACEMENTS.items():
@@ -27,13 +34,6 @@ def clean_text(text):
             text = text.replace(bad.capitalize(), good.capitalize())
     return text
 
-def spam_score(text: str) -> int:
-    score = 0
-    text_lower = text.lower()
-    for bad in SPAM_REPLACEMENTS.keys():
-        score += text_lower.count(bad)
-    return score
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -41,34 +41,31 @@ def index():
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form["sender_name"]
-    gmail_user = request.form["gmail_user"]
-    app_password = request.form["app_password"]
     subject = clean_text(request.form["subject"])
     body = clean_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
-    score = spam_score(subject + " " + body)
-
     total = len(recipients)
     sent_count = fail_count = 0
     results = []
 
-    for recipient in recipients:
+    for i, recipient in enumerate(recipients):
+        smtp_config = SMTP_SERVERS[i % len(SMTP_SERVERS)]  # rotate servers
         try:
             msg = MIMEMultipart()
-            msg["From"] = f"{sender_name} <{gmail_user}>"
+            msg["From"] = f"{sender_name} <{smtp_config['user']}>"
             msg["To"] = recipient
             msg["Subject"] = subject
             msg.attach(MIMEText(body, "plain"))
 
-            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server = smtplib.SMTP(smtp_config["host"], smtp_config["port"])
             server.starttls()
-            server.login(gmail_user, app_password)
-            server.sendmail(gmail_user, recipient, msg.as_string())
+            server.login(smtp_config["user"], smtp_config["password"])
+            server.sendmail(smtp_config["user"], recipient, msg.as_string())
             server.quit()
             sent_count += 1
-            status = "Sent"
+            status = f"Sent via {smtp_config['host']}"
         except Exception as e:
             fail_count += 1
             status = f"Failed: {e}"
@@ -80,8 +77,7 @@ def send():
             "sent": sent_count,
             "failed": fail_count,
             "remaining": remaining,
-            "status": status,
-            "spam_score": score
+            "status": status
         })
 
     return jsonify(results)
