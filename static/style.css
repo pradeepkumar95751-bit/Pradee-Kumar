@@ -1,73 +1,55 @@
 body {
     font-family: Arial, sans-serif;
     background: #f4f4f4;
-    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
 }
 
 .dashboard {
     background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px #ccc;
-    width: 500px;
-    text-align: center;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #aaa;
+    width: 400px;
 }
 
 label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
-    text-align: left;
 }
 
-input, textarea {
+input, textarea, button {
     width: 100%;
-    padding: 8px;
     margin-top: 5px;
-    border-radius: 4px;
+    padding: 8px;
     border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-.send-btn {
+button {
     background: #28a745;
     color: #fff;
     border: none;
-    padding: 10px;
     margin-top: 15px;
     cursor: pointer;
-    width: 100%;
-    font-size: 16px;
 }
 
-.send-btn:hover {
-    background: #218838;
-}
-
-.send-btn:disabled {
+button:disabled {
     background: #ccc;
     cursor: not-allowed;
 }
 
 .counters {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
-.box {
-    flex: 1;
+.cloudflare-box {
+    background: #e9ffe9;
+    border: 1px solid #28a745;
     padding: 10px;
-    text-align: center;
+    margin-top: 15px;
     border-radius: 4px;
-    font-weight: bold;
+}
