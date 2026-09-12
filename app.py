@@ -5,6 +5,24 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
+# Spam word replacements dictionary
+SPAM_REPLACEMENTS = {
+    "rank": "position",
+    "first page of google": "top search results",
+    "visibility": "online presence",
+    "reports": "analysis",
+    "quote": "proposal",
+    "information": "insights"
+}
+
+def clean_text(text):
+    text_lower = text.lower()
+    for bad, good in SPAM_REPLACEMENTS.items():
+        if bad in text_lower:
+            text = text.replace(bad, good)
+            text = text.replace(bad.capitalize(), good.capitalize())
+    return text
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -14,8 +32,8 @@ def send():
     sender_name = request.form["sender_name"]
     gmail_user = request.form["gmail_user"]
     app_password = request.form["app_password"]
-    subject = request.form["subject"]
-    body = request.form["body"]
+    subject = clean_text(request.form["subject"])
+    body = clean_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
