@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
+# Risky words list for spam protection
 SPAM_WORDS = [
     "rank", "google", "first page", "visibility", "yahoo",
     "quotation", "quote", "reports", "cost", "pricing",
