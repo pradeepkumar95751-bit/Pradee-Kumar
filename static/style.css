@@ -1,101 +1,39 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.dashboard {
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px #ccc;
-    width: 500px;
-    text-align: center;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    text-align: left;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.send-btn {
-    background: #28a745;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    margin-top: 15px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-}
-
-.send-btn:hover {
-    background: #218838;
-}
-
-.send-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-.spam-box {
-    background: #e9ffe9;
+.spam-protection {
     border: 1px solid #28a745;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 4px;
+    background: #f9fff9;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px #ccc;
     text-align: left;
+    font-family: Arial, sans-serif;
 }
 
-.spam-box .success {
+.spam-header {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.spam-success {
     color: green;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.spam-box .warn {
-    color: red;
-    font-size: 12px;
-}
-
-.counters {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.box {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    border-radius: 4px;
+.spam-warning {
+    color: orange;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.total { background: #cce5ff; }
-.sent { background: #d4edda; }
-.failed { background: #f8d7da; }
-.remaining { background: #fff3cd; }
+.spam-note {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
 
-.status {
-    margin
+.spam-footer {
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+}
