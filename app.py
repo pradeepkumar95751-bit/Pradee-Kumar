@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Spam word replacements dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "position",
+    "rank": "rank",
     "first page of google": "top search results",
     "visibility": "online presence",
     "reports": "analysis",
