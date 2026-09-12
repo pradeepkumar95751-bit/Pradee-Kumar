@@ -5,22 +5,23 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
-# Risky words list for spam protection
-SPAM_WORDS = [
-    "rank", "google", "first page", "visibility", "yahoo",
-    "quotation", "quote", "reports", "cost", "pricing",
-    "seo", "traffic", "information", "info", "visible"
-]
+# Spam word replacements dictionary
+SPAM_REPLACEMENTS = {
+    "rank": "position",
+    "first page of google": "top search results",
+    "visibility": "online presence",
+    "reports": "analysis",
+    "quote": "proposal",
+    "information": "insights"
+}
 
-def clean_text(text: str) -> str:
-    return " ".join(text.split())
-
-def spam_score(text: str) -> int:
-    score = 0
+def clean_text(text):
     text_lower = text.lower()
-    for word in SPAM_WORDS:
-        score += text_lower.count(word)
-    return score
+    for bad, good in SPAM_REPLACEMENTS.items():
+        if bad in text_lower:
+            text = text.replace(bad, good)
+            text = text.replace(bad.capitalize(), good.capitalize())
+    return text
 
 @app.route("/")
 def index():
@@ -35,8 +36,6 @@ def send():
     body = clean_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
-
-    score = spam_score(subject + " " + body)
 
     total = len(recipients)
     sent_count = fail_count = 0
@@ -56,7 +55,7 @@ def send():
             server.sendmail(gmail_user, recipient, msg.as_string())
             server.quit()
             sent_count += 1
-            status = "Delivered"
+            status = "Sent"
         except Exception as e:
             fail_count += 1
             status = f"Failed: {e}"
@@ -68,8 +67,7 @@ def send():
             "sent": sent_count,
             "failed": fail_count,
             "remaining": remaining,
-            "status": status,
-            "spam_score": score
+            "status": status
         })
 
     return jsonify(results)
