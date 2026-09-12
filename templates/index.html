@@ -40,8 +40,8 @@
         </div>
         <p class="status" id="status">Ready to send</p>
 
-        <!-- Cloudflare-style Success Box -->
-        <div id="cloudflareBox" class="cloudflare-box" style="display:none;">
+        <!-- Cloudflare-style Success Box (always visible) -->
+        <div class="cloudflare-box">
             <span class="cf-success">✔ Success! CLOUDFLARE Privacy - Help</span>
             <p class="cf-warn">For testing only. If seen, report to site owner.</p>
         </div>
@@ -74,9 +74,6 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
             document.getElementById("remaining").innerText = update.remaining;
             document.getElementById("status").innerText = update.status + " → " + update.recipient;
         });
-
-        // Show Cloudflare-style box after sending
-        document.getElementById("cloudflareBox").style.display = "block";
 
         alert("Mail sending completed!");
         sendBtn.disabled = false;
