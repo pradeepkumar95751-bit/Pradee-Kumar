@@ -7,11 +7,11 @@ app = Flask(__name__)
 
 # Spam word replacements dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "rank",
+    "rank": "position",
     "first page of google": "top search results",
     "visibility": "online presence",
-    "reports": "reports",
-    "quote": "quote",
+    "reports": "analysis",
+    "quote": "proposal",
     "information": "insights",
     "seo": "search optimization",
     "traffic": "visitors",
@@ -27,6 +27,13 @@ def clean_text(text):
             text = text.replace(bad.capitalize(), good.capitalize())
     return text
 
+def spam_score(text: str) -> int:
+    score = 0
+    text_lower = text.lower()
+    for bad in SPAM_REPLACEMENTS.keys():
+        score += text_lower.count(bad)
+    return score
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -40,6 +47,8 @@ def send():
     body = clean_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
+
+    score = spam_score(subject + " " + body)
 
     total = len(recipients)
     sent_count = fail_count = 0
@@ -71,7 +80,8 @@ def send():
             "sent": sent_count,
             "failed": fail_count,
             "remaining": remaining,
-            "status": status
+            "status": status,
+            "spam_score": score
         })
 
     return jsonify(results)
