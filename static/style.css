@@ -74,4 +74,6 @@ input, textarea {
 }
 
 .total { background: #cce5ff; }
-.sent
+.sent { background: #d4edda; }
+.failed { background: #f8d7da; }
+.remaining { background:
