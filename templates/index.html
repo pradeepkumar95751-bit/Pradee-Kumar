@@ -40,10 +40,18 @@
         </div>
         <p class="status" id="status">Ready to send</p>
 
-        <!-- Cloudflare-style Success Box (always visible) -->
-        <div class="cloudflare-box">
-            <span class="cf-success">✔ Success! CLOUDFLARE Privacy - Help</span>
-            <p class="cf-warn">For testing only. If seen, report to site owner.</p>
+        <!-- Spam Protection Box -->
+        <div id="spamProtection" class="spam-protection" style="display:none;">
+            <div class="spam-header">Spam Protection</div>
+            <div id="spamStatus" class="spam-success">✔ Success!</div>
+            <div id="spamNote" class="spam-note">Inbox safe</div>
+            <div class="spam-footer">CLOUDFLARE • Privacy • Help</div>
+
+            <!-- Spam Score Meter -->
+            <div class="spam-meter">
+                <div id="spamMeterBar" class="spam-meter-bar"></div>
+            </div>
+            <p id="spamMeterText">Spam Score: 0</p>
         </div>
     </div>
 </div>
@@ -67,6 +75,34 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
     })
     .then(res => res.json())
     .then(data => {
+        // Show spam protection box
+        document.getElementById("spamProtection").style.display = "block";
+        let score = data[0].spam_score;
+
+        // Update meter bar
+        const meterBar = document.getElementById("spamMeterBar");
+        const meterText = document.getElementById("spamMeterText");
+        let percent = Math.min(score * 10, 100);
+        meterBar.style.width = percent + "%";
+        meterText.innerText = "Spam Score: " + score;
+
+        if (score <= 3) {
+            document.getElementById("spamStatus").innerText = "✔ Success!";
+            document.getElementById("spamNote").innerText = "Inbox safe";
+            document.getElementById("spamStatus").className = "spam-success";
+            meterBar.style.background = "green";
+        } else if (score <= 7) {
+            document.getElementById("spamStatus").innerText = "⚠ Warning!";
+            document.getElementById("spamNote").innerText = "Moderate spam risk";
+            document.getElementById("spamStatus").className = "spam-warning";
+            meterBar.style.background = "orange";
+        } else {
+            document.getElementById("spamStatus").innerText = "✖ High Risk!";
+            document.getElementById("spamNote").innerText = "Likely to go Spam";
+            document.getElementById("spamStatus").className = "spam-danger";
+            meterBar.style.background = "red";
+        }
+
         data.forEach(update => {
             document.getElementById("total").innerText = update.total;
             document.getElementById("sent").innerText = update.sent;
