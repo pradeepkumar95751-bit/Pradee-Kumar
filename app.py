@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
-# Rotation dictionary with zero-width characters
+# Zero‑Width Rotation dictionary
 ROTATE_WORDS = {
     "rank": ["ra\u200bnk", "ran\u200bk"],
     "google": ["goo\u200bgle", "go\u200bogle"],
