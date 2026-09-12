@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
-# Risky words list
+# Risky words list for spam protection
 SPAM_WORDS = [
     "rank", "google", "first page", "visibility", "yahoo",
     "quotation", "quote", "reports", "cost", "pricing",
@@ -19,8 +19,7 @@ def spam_score(text: str) -> int:
     score = 0
     text_lower = text.lower()
     for word in SPAM_WORDS:
-        if word in text_lower:
-            score += text_lower.count(word)
+        score += text_lower.count(word)
     return score
 
 @app.route("/")
@@ -39,8 +38,8 @@ def send():
 
     # Spam protection check
     score = spam_score(subject + " " + body)
-    if score > 5:
-        return jsonify({"error": f"High spam score ({score}). Please reduce risky words."})
+    if score > 8:  # threshold
+        return jsonify({"error": f"High spam score ({score}). Reduce risky words for better inbox hit."})
 
     total = len(recipients)
     sent_count = fail_count = 0
