@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import smtplib
+import smtplib, time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Spam word replacements dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "position",
+    "rank": "rank",
     "first page of google": "top search results",
     "visibility": "online presence",
     "reports": "analysis",
@@ -41,7 +41,7 @@ def index():
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form["sender_name"]
-    sender_id = request.form["sender_id"]   # new field
+    sender_id = request.form["sender_id"]
     app_password = request.form["app_password"]
     subject = clean_text(request.form["subject"])
     body = clean_text(request.form["body"])
@@ -65,12 +65,18 @@ def send():
             server.starttls()
             server.login(smtp_config["user"], smtp_config["password"])
             server.sendmail(smtp_config["user"], recipient, msg.as_string())
-            server.quit()
-            sent_count += 1
-            status = f"Sent via {smtp_config['host']}"
         except Exception as e:
             fail_count += 1
             status = f"Failed: {e}"
+        else:
+            sent_count += 1
+            status = f"Sent via {smtp_config['host']}"
+        finally:
+            try:
+                server.quit()
+            except:
+                pass
+            time.sleep(1)  # small delay to avoid busy error
 
         remaining = total - (sent_count + fail_count)
         results.append({
