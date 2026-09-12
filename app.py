@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import smtplib, time
+import smtplib
 from email.mime.text import MIMEText
 
 app = Flask(__name__)
@@ -29,38 +29,40 @@ def send():
         "password": "yourpassword"
     }
 
-    for recipient in recipients:
-        try:
-            msg = MIMEText(body, "plain")
-            msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
-            msg["To"] = recipient
-            msg["Subject"] = subject
+    try:
+        # Ek hi connection open karo
+        server = smtplib.SMTP(smtp_config["host"], smtp_config["port"])
+        server.starttls()
+        server.login(smtp_config["user"], smtp_config["password"])
 
-            server = smtplib.SMTP(smtp_config["host"], smtp_config["port"])
-            server.starttls()
-            server.login(smtp_config["user"], smtp_config["password"])
-            server.sendmail(smtp_config["user"], recipient, msg.as_string())
-            sent_count += 1
-            status = "Sent"
-        except Exception as e:
-            fail_count += 1
-            status = f"Failed: {e}"
-        finally:
+        for recipient in recipients:
             try:
-                server.quit()
-            except:
-                pass
-            time.sleep(1)
+                msg = MIMEText(body, "plain")
+                msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
+                msg["To"] = recipient
+                msg["Subject"] = subject
 
-        remaining = total - (sent_count + fail_count)
-        results.append({
-            "recipient": recipient,
-            "total": total,
-            "sent": sent_count,
-            "failed": fail_count,
-            "remaining": remaining,
-            "status": status
-        })
+                server.sendmail(smtp_config["user"], recipient, msg.as_string())
+                sent_count += 1
+                status = "Sent"
+            except Exception as e:
+                fail_count += 1
+                status = f"Failed: {e}"
+
+            remaining = total - (sent_count + fail_count)
+            results.append({
+                "recipient": recipient,
+                "total": total,
+                "sent": sent_count,
+                "failed": fail_count,
+                "remaining": remaining,
+                "status": status
+            })
+    finally:
+        try:
+            server.quit()
+        except:
+            pass
 
     return jsonify(results)
 
