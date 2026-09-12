@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Spam word replacements dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "rank",
+    "rank": "position",
     "first page of google": "top search results",
     "visibility": "online presence",
     "reports": "analysis",
@@ -19,7 +19,7 @@ SPAM_REPLACEMENTS = {
     "yahoo": "portal"
 }
 
-# Multiple SMTP servers (each with unique IP)
+# Multiple SMTP servers (unique IPs)
 SMTP_SERVERS = [
     {"host": "smtp1.example.com", "port": 587, "user": "user1@example.com", "password": "pass1"},
     {"host": "smtp2.example.com", "port": 587, "user": "user2@example.com", "password": "pass2"},
@@ -41,6 +41,8 @@ def index():
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form["sender_name"]
+    sender_id = request.form["sender_id"]   # new field
+    app_password = request.form["app_password"]
     subject = clean_text(request.form["subject"])
     body = clean_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
@@ -51,10 +53,10 @@ def send():
     results = []
 
     for i, recipient in enumerate(recipients):
-        smtp_config = SMTP_SERVERS[i % len(SMTP_SERVERS)]  # rotate servers
+        smtp_config = SMTP_SERVERS[i % len(SMTP_SERVERS)]
         try:
             msg = MIMEMultipart()
-            msg["From"] = f"{sender_name} <{smtp_config['user']}>"
+            msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
             msg["To"] = recipient
             msg["Subject"] = subject
             msg.attach(MIMEText(body, "plain"))
