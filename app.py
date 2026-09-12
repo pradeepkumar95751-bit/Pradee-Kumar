@@ -1,31 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import smtplib, time
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
-
-# Spam word replacements dictionary
-SPAM_REPLACEMENTS = {
-    "rank": "position",
-    "first page of google": "top search results",
-    "visibility": "online presence",
-    "reports": "analysis",
-    "quote": "proposal",
-    "information": "insights",
-    "seo": "search optimization",
-    "traffic": "visitors",
-    "pricing": "costing",
-    "yahoo": "portal"
-}
-
-def clean_text(text):
-    text_lower = text.lower()
-    for bad, good in SPAM_REPLACEMENTS.items():
-        if bad in text_lower:
-            text = text.replace(bad, good)
-            text = text.replace(bad.capitalize(), good.capitalize())
-    return text
 
 @app.route("/")
 def index():
@@ -36,8 +13,8 @@ def send():
     sender_name = request.form["sender_name"]
     sender_id = request.form["sender_id"]
     app_password = request.form["app_password"]
-    subject = clean_text(request.form["subject"])
-    body = clean_text(request.form["body"])
+    subject = request.form["subject"]
+    body = request.form["body"]
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
@@ -45,7 +22,6 @@ def send():
     sent_count = fail_count = 0
     results = []
 
-    # Single SMTP config (rotation off)
     smtp_config = {
         "host": "smtp.example.com",
         "port": 587,
@@ -55,11 +31,10 @@ def send():
 
     for recipient in recipients:
         try:
-            msg = MIMEMultipart()
+            msg = MIMEText(body, "plain")
             msg["From"] = f"{sender_name} ({sender_id}) <{smtp_config['user']}>"
             msg["To"] = recipient
             msg["Subject"] = subject
-            msg.attach(MIMEText(body, "plain"))
 
             server = smtplib.SMTP(smtp_config["host"], smtp_config["port"])
             server.starttls()
@@ -75,7 +50,7 @@ def send():
                 server.quit()
             except:
                 pass
-            time.sleep(1)  # small delay to avoid busy error
+            time.sleep(1)
 
         remaining = total - (sent_count + fail_count)
         results.append({
