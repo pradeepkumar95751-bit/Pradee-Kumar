@@ -24,11 +24,6 @@
             <label>Message Body:</label>
             <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
-            <div class="spam-box">
-                <span class="success">✔ Success!</span> CLOUDFLARE Privacy - Help
-                <p class="warn">For testing only. If seen, report to site owner.</p>
-            </div>
-
             <label>Recipients:</label>
             <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
             <p>Found: <span id="found">0</span></p>
@@ -36,7 +31,7 @@
             <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
         </form>
 
-        <!-- Counters directly below -->
+        <!-- Counters -->
         <div class="counters">
             <div class="box total">TOTAL: <span id="total">0</span></div>
             <div class="box sent">SENT: <span id="sent">0</span></div>
@@ -44,6 +39,12 @@
             <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
         </div>
         <p class="status" id="status">Ready to send</p>
+
+        <!-- Cloudflare-style Success Box -->
+        <div id="cloudflareBox" class="cloudflare-box" style="display:none;">
+            <span class="cf-success">✔ Success! CLOUDFLARE Privacy - Help</span>
+            <p class="cf-warn">For testing only. If seen, report to site owner.</p>
+        </div>
     </div>
 </div>
 
@@ -73,6 +74,9 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
             document.getElementById("remaining").innerText = update.remaining;
             document.getElementById("status").innerText = update.status + " → " + update.recipient;
         });
+
+        // Show Cloudflare-style box after sending
+        document.getElementById("cloudflareBox").style.display = "block";
 
         alert("Mail sending completed!");
         sendBtn.disabled = false;
