@@ -9,7 +9,7 @@
     <h2>Bulk Email Sender</h2>
 
     <!-- Compose Message -->
-    <div class="compose">
+    <form id="mailForm">
         <label>Sender Name:</label>
         <input type="text" name="sender_name" id="sender_name" placeholder="E.g., John Doe" required>
 
@@ -24,32 +24,30 @@
 
         <label>Message Body (Plain Text):</label>
         <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
-    </div>
 
-    <!-- Spam Protection -->
-    <div class="spam-box">
-        <span class="spam-success">✔ Success!</span>
-        <p class="spam-note">For testing only. If seen, report to site owner.</p>
-        <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
-    </div>
+        <!-- Spam Protection -->
+        <div class="spam-box">
+            <span class="spam-success">✔ Success!</span>
+            <p class="spam-note">For testing only. If seen, report to site owner.</p>
+            <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
+        </div>
 
-    <!-- Recipients -->
-    <div class="recipients">
+        <!-- Recipients -->
         <label>Recipients:</label>
         <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
         <p>Found: <span id="found">0</span></p>
-    </div>
 
-    <!-- Progress Monitor -->
-    <div class="counters">
-        <div>TOTAL: <span id="total">0</span></div>
-        <div>SENT: <span id="sent">0</span></div>
-        <div>FAILED: <span id="failed">0</span></div>
-        <div>REMAINING: <span id="remaining">0</span></div>
-    </div>
-    <p id="status">Ready to send</p>
+        <!-- Progress Monitor -->
+        <div class="counters">
+            <div>TOTAL: <span id="total">0</span></div>
+            <div>SENT: <span id="sent">0</span></div>
+            <div>FAILED: <span id="failed">0</span></div>
+            <div>REMAINING: <span id="remaining">0</span></div>
+        </div>
+        <p id="status">Ready to send</p>
 
-    <button type="submit" id="sendBtn">Send All</button>
+        <button type="submit" id="sendBtn">Send All</button>
+    </form>
 </div>
 
 <script>
@@ -78,9 +76,9 @@ document.getElementById("recipients").addEventListener("input", function(){
 });
 
 // Form submit
-document.getElementById("sendBtn").addEventListener("click", function(e){
+document.getElementById("mailForm").addEventListener("submit", function(e){
     e.preventDefault();
-    const formData = new FormData(document.getElementById("mailForm"));
+    const formData = new FormData(this);
     const sendBtn = document.getElementById("sendBtn");
     sendBtn.disabled = true;
     document.getElementById("status").innerText = "Sending...";
