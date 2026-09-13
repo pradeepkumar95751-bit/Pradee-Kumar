@@ -1,114 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Email Sender Final</title>
+    <title>Bulk Email Sender</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="center-container">
-    <div class="dashboard">
-        <h2>Email Sender</h2>
-        <form id="mailForm">
-            <label>Sender Name:</label>
-            <input type="text" name="sender_name" required>
+<div class="dashboard">
+    <h2>Bulk Email Sender</h2>
 
-            <label>Your Gmail:</label>
-            <input type="email" name="gmail_user" required>
+    <!-- Compose Message -->
+    <div class="compose">
+        <label>Sender Name:</label>
+        <input type="text" name="sender_name" id="sender_name" placeholder="E.g., John Doe" required>
 
-            <label>App Password:</label>
-            <input type="password" name="app_password" required>
+        <label>Your Gmail:</label>
+        <input type="text" name="sender_id" id="sender_id" placeholder="you@gmail.com" required>
 
-            <label>Email Subject:</label>
-            <input type="text" name="subject" required>
+        <label>App Password:</label>
+        <input type="password" name="app_password" placeholder="16-char app password" required>
 
-            <label>Message Body:</label>
-            <textarea name="body" rows="6" required></textarea>
+        <label>Email Subject:</label>
+        <input type="text" name="subject" placeholder="Enter subject line..." required>
 
-            <label>Recipients:</label>
-            <textarea name="recipients" rows="6" id="recipients" required></textarea>
-            <p>Found: <span id="found">0</span></p>
-
-            <button type="submit" id="sendBtn" class="send-btn">Send All ✈</button>
-        </form>
-
-        <div class="counters">
-            <div class="box total">TOTAL: <span id="total">0</span></div>
-            <div class="box sent">SENT: <span id="sent">0</span></div>
-            <div class="box failed">FAILED: <span id="failed">0</span></div>
-            <div class="box remaining">REMAINING: <span id="remaining">0</span></div>
-        </div>
-        <p class="status" id="status">Ready to send</p>
-
-        <!-- Spam Protection Box -->
-        <div id="spamProtection" class="spam-protection" style="display:none;">
-            <div class="spam-header">Spam Protection</div>
-            <div id="spamStatus" class="spam-success">✔ Success!</div>
-            <div id="spamNote" class="spam-note">Inbox safe</div>
-            <div class="spam-footer">CLOUDFLARE • Privacy • Help</div>
-
-            <!-- Spam Score Meter -->
-            <div class="spam-meter">
-                <div id="spamMeterBar" class="spam-meter-bar"></div>
-            </div>
-            <p id="spamMeterText">Spam Score: 0</p>
-        </div>
+        <label>Message Body (Plain Text):</label>
+        <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
     </div>
+
+    <!-- Spam Protection -->
+    <div class="spam-box">
+        <span class="spam-success">✔ Success!</span>
+        <p class="spam-note">For testing only. If seen, report to site owner.</p>
+        <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
+    </div>
+
+    <!-- Recipients -->
+    <div class="recipients">
+        <label>Recipients:</label>
+        <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
+        <p>Found: <span id="found">0</span></p>
+    </div>
+
+    <!-- Progress Monitor -->
+    <div class="counters">
+        <div>TOTAL: <span id="total">0</span></div>
+        <div>SENT: <span id="sent">0</span></div>
+        <div>FAILED: <span id="failed">0</span></div>
+        <div>REMAINING: <span id="remaining">0</span></div>
+    </div>
+    <p id="status">Ready to send</p>
+
+    <button type="submit" id="sendBtn">Send All</button>
 </div>
 
 <script>
+// Auto-fill Sender Name from Gmail ID (first or second word, numbers ignored)
+document.getElementById("sender_id").addEventListener("input", function(){
+    const email = this.value.trim();
+    if(email.includes("@")){
+        const username = email.split("@")[0];
+        const parts = username.split(/[._]/); 
+        const cleanParts = parts.map(p => p.replace(/[0-9]/g, ""));
+        let name = "";
+        for(let p of cleanParts){
+            if(p.length > 0){
+                name = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+                break;
+            }
+        }
+        document.getElementById("sender_name").value = name;
+    }
+});
+
+// Count recipients
 document.getElementById("recipients").addEventListener("input", function(){
     const emails = this.value.replace(/,/g, "\n").split("\n").filter(e => e.trim() !== "");
     document.getElementById("found").innerText = emails.length;
 });
 
-document.getElementById("mailForm").addEventListener("submit", function(e){
+// Form submit
+document.getElementById("sendBtn").addEventListener("click", function(e){
     e.preventDefault();
-    const formData = new FormData(this);
+    const formData = new FormData(document.getElementById("mailForm"));
     const sendBtn = document.getElementById("sendBtn");
     sendBtn.disabled = true;
     document.getElementById("status").innerText = "Sending...";
 
-    fetch("/send", {
-        method: "POST",
-        body: formData
-    })
+    fetch("/send", { method: "POST", body: formData })
     .then(res => res.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-            document.getElementById("status").innerText = "Spam protection triggered!";
-            sendBtn.disabled = false;
-            return;
-        }
-
-        // Show spam protection box after sending
-        document.getElementById("spamProtection").style.display = "block";
-        let score = data[0].spam_score;
-
-        // Update meter bar
-        const meterBar = document.getElementById("spamMeterBar");
-        const meterText = document.getElementById("spamMeterText");
-        let percent = Math.min(score * 10, 100);
-        meterBar.style.width = percent + "%";
-        meterText.innerText = "Spam Score: " + score;
-
-        if (score <= 3) {
-            document.getElementById("spamStatus").innerText = "✔ Success!";
-            document.getElementById("spamNote").innerText = "Inbox safe";
-            document.getElementById("spamStatus").className = "spam-success";
-            meterBar.style.background = "green";
-        } else if (score <= 7) {
-            document.getElementById("spamStatus").innerText = "⚠ Warning!";
-            document.getElementById("spamNote").innerText = "Moderate spam risk";
-            document.getElementById("spamStatus").className = "spam-warning";
-            meterBar.style.background = "orange";
-        } else {
-            document.getElementById("spamStatus").innerText = "✖ High Risk!";
-            document.getElementById("spamNote").innerText = "Likely to go Spam";
-            document.getElementById("spamStatus").className = "spam-danger";
-            meterBar.style.background = "red";
-        }
-
         data.forEach(update => {
             document.getElementById("total").innerText = update.total;
             document.getElementById("sent").innerText = update.sent;
@@ -116,13 +95,11 @@ document.getElementById("mailForm").addEventListener("submit", function(e){
             document.getElementById("remaining").innerText = update.remaining;
             document.getElementById("status").innerText = update.status + " → " + update.recipient;
         });
-
-        alert("Mail sending completed!");
         sendBtn.disabled = false;
+        alert("Mail sending completed!"); // popup after sending
     })
     .catch(err => {
         document.getElementById("status").innerText = "Error occurred!";
-        alert("Error: " + err);
         sendBtn.disabled = false;
     });
 });
