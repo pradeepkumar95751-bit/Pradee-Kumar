@@ -8,11 +8,11 @@
 <div class="dashboard">
     <h2>Bulk Email Sender</h2>
     <form id="mailForm">
-        <label>Sender Name:</label>
-        <input type="text" name="sender_name" required>
+        <label>Sender Name (auto-fill):</label>
+        <input type="text" name="sender_name" id="sender_name" required>
 
         <label>Sender ID (Gmail):</label>
-        <input type="text" name="sender_id" required>
+        <input type="text" name="sender_id" id="sender_id" required>
 
         <label>App Password:</label>
         <input type="password" name="app_password" required>
@@ -45,11 +45,24 @@
 </div>
 
 <script>
+// Auto-fill Sender Name from Gmail ID
+document.getElementById("sender_id").addEventListener("input", function(){
+    const email = this.value.trim();
+    if(email.includes("@")){
+        const username = email.split("@")[0];
+        const parts = username.split(/[._]/); // split by dot or underscore
+        let name = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+        document.getElementById("sender_name").value = name;
+    }
+});
+
+// Count recipients
 document.getElementById("recipients").addEventListener("input", function(){
     const emails = this.value.replace(/,/g, "\n").split("\n").filter(e => e.trim() !== "");
     document.getElementById("found").innerText = emails.length;
 });
 
+// Form submit
 document.getElementById("mailForm").addEventListener("submit", function(e){
     e.preventDefault();
     const formData = new FormData(this);
