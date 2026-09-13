@@ -1,127 +1,47 @@
 body {
     font-family: Arial, sans-serif;
     background: #f4f4f4;
-    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
 }
 
 .dashboard {
     background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px #ccc;
-    width: 500px;
-    text-align: center;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #aaa;
+    width: 40%; /* thoda bada for clarity */
 }
 
 label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
-    text-align: left;
 }
 
-input, textarea {
+input, textarea, button {
     width: 100%;
-    padding: 8px;
     margin-top: 5px;
-    border-radius: 4px;
+    padding: 8px;
     border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-.send-btn {
+button {
     background: #28a745;
     color: #fff;
     border: none;
-    padding: 10px;
     margin-top: 15px;
     cursor: pointer;
-    width: 100%;
-    font-size: 16px;
 }
 
-.send-btn:hover {
-    background: #218838;
-}
-
-.send-btn:disabled {
+button:disabled {
     background: #ccc;
     cursor: not-allowed;
 }
 
-/* Spam Protection Box */
-.spam-protection {
-    border: 1px solid #28a745;
-    background: #f9fff9;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 6px;
-    box-shadow: 0 0 5px #ccc;
-    text-align: left;
-    font-family: Arial, sans-serif;
-}
-
-.spam-header {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.spam-success {
-    color: green;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.spam-warning {
-    color: orange;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.spam-note {
-    font-size: 13px;
-    margin-bottom: 8px;
-    color: red;
-}
-
-.spam-footer {
-    font-size: 12px;
-    color: #555;
-    text-align: right;
-}
-
-/* Counters */
 .counters {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.box {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-.total { background: #cce5ff; }
-.sent { background: #d4edda; }
-.failed { background: #f8d7da; }
-.remaining { background: #fff3cd; }
-
-.status {
     margin-top: 15px;
-    font-style: italic;
-}
+    display
