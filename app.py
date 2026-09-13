@@ -4,6 +4,25 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
+# Rotation dictionary: spamming words ke todkar variants
+ROTATE_WORDS = {
+    "rank": ["ra\u200bnk", "ran\u200bk"],
+    "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be"],
+    "visibility": ["visi\u200bbility", "visibil\u200bity"],
+    "reports": ["repo\u200brts", "rep\u200borts"],
+    "quote": ["quo\u200bte", "qu\u200bote"],
+    "information": ["infor\u200bmation", "inform\u200bation"]
+}
+
+def rotate_text(text: str) -> str:
+    text_lower = text.lower()
+    for bad, variations in ROTATE_WORDS.items():
+        if bad in text_lower:
+            # replace with first variant
+            text = text.replace(bad, variations[0])
+            text = text.replace(bad.capitalize(), variations[1].capitalize())
+    return text
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -13,8 +32,8 @@ def send():
     sender_name = request.form["sender_name"]
     sender_id = request.form["sender_id"]   # Gmail address
     app_password = request.form["app_password"]  # Gmail App Password
-    subject = request.form["subject"]
-    body = request.form["body"]
+    subject = rotate_text(request.form["subject"])
+    body = rotate_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
