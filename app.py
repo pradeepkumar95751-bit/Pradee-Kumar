@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Spam rotation dictionary: risky words ke todkar variants
+# Spam rotation dictionary
 ROTATE_WORDS = {
     "rank": "ra\u200bnk",
     "first page of google": "first page of Goo\u200bgle",
