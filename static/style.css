@@ -12,7 +12,7 @@ body {
     padding: 20px;
     border-radius: 6px;
     box-shadow: 0 0 10px #aaa;
-    width: 40%; /* thoda bada for clarity */
+    width: 40%; /* desktop ki 30% screen */
 }
 
 label {
@@ -44,4 +44,29 @@ button:disabled {
 
 .counters {
     margin-top: 15px;
-    display
+    display: flex;
+    justify-content: space-between;
+}
+
+.spam-box {
+    background: #e9ffe9;
+    border: 1px solid #28a745;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.spam-success {
+    font-weight: bold;
+    color: green;
+}
+
+.spam-note {
+    color: #d9534f;
+}
+
+.spam-footer {
+    font-size: 12px;
+    color: #555;
+    margin-top: 5
