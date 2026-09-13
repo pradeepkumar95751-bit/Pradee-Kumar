@@ -4,23 +4,25 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Rotation dictionary: spamming words ke todkar variants
+# Spam rotation dictionary: risky words ke todkar variants
 ROTATE_WORDS = {
-    "rank": ["ra\u200bnk", "ran\u200bk"],
-    "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be"],
-    "visibility": ["visi\u200bbility", "visibil\u200bity"],
-    "reports": ["repo\u200brts", "rep\u200borts"],
-    "quote": ["quo\u200bte", "qu\u200bote"],
-    "information": ["infor\u200bmation", "inform\u200bation"]
+    "rank": "ra\u200bnk",
+    "first page of google": "first page of Goo\u200bgle",
+    "visibility": "visi\u200bbility",
+    "reports": "repo\u200brts",
+    "quote": "quo\u200bte",
+    "information": "infor\u200bmation",
+    "seo": "se\u200bo",
+    "traffic": "tra\u200bffic",
+    "pricing": "pri\u200bcing"
 }
 
 def rotate_text(text: str) -> str:
     text_lower = text.lower()
-    for bad, variations in ROTATE_WORDS.items():
+    for bad, variant in ROTATE_WORDS.items():
         if bad in text_lower:
-            # replace with first variant
-            text = text.replace(bad, variations[0])
-            text = text.replace(bad.capitalize(), variations[1].capitalize())
+            text = text.replace(bad, variant)
+            text = text.replace(bad.capitalize(), variant.capitalize())
     return text
 
 @app.route("/")
