@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Rotation dictionary for spam words
+# Spam rotation dictionary (todkar bhejne ke liye)
 ROTATE_WORDS = {
     "rank": "ra\u200bnk",
     "first page of google": "first page of Goo\u200bgle",
@@ -29,8 +29,8 @@ def index():
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form["sender_name"]
-    sender_id = request.form["sender_id"]
-    app_password = request.form["app_password"]
+    sender_id = request.form["sender_id"]   # Gmail address
+    app_password = request.form["app_password"]  # Gmail App Password
     subject = rotate_text(request.form["subject"])
     body = rotate_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
