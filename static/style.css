@@ -12,7 +12,7 @@ body {
     padding: 20px;
     border-radius: 6px;
     box-shadow: 0 0 10px #aaa;
-    width: 50%; /* desktop ki aadhi screen */
+    width: 35%; /* desktop ki 35% screen */
 }
 
 label {
