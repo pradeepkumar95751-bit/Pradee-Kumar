@@ -25,13 +25,6 @@
         <label>Message Body (Plain Text):</label>
         <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
-        <!-- Spam Protection -->
-        <div class="spam-box">
-            <span class="spam-success">✔ Success!</span>
-            <p class="spam-note">For testing only. If seen, report to site owner.</p>
-            <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
-        </div>
-
         <!-- Recipients -->
         <label>Recipients:</label>
         <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
@@ -46,12 +39,20 @@
         </div>
         <p id="status">Ready to send</p>
 
+        <!-- Send Button -->
         <button type="submit" id="sendBtn">Send All</button>
+
+        <!-- Spam Protection Box (moved below button) -->
+        <div class="spam-box">
+            <span class="spam-success">✔ Success!</span>
+            <p class="spam-note">For testing only. If seen, report to site owner.</p>
+            <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
+        </div>
     </form>
 </div>
 
 <script>
-// Auto-fill Sender Name from Gmail ID (first or second word, numbers ignored)
+// Auto-fill Sender Name from Gmail ID (first word, numbers ignored)
 document.getElementById("sender_id").addEventListener("input", function(){
     const email = this.value.trim();
     if(email.includes("@")){
