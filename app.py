@@ -6,22 +6,14 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# =========================================================
-# EMAIL VALIDATION
-# =========================================================
+# Email validation
 def is_valid_email(email: str) -> bool:
     return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) is not None
 
-# =========================================================
-# HOME PAGE
-# =========================================================
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# =========================================================
-# SEND EMAIL
-# =========================================================
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form.get("sender_name", "").strip()
@@ -41,7 +33,8 @@ def send():
     server = None
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        # SMTP connection with timeout
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
         server.starttls()
         server.login(sender_id, app_password)
 
@@ -51,6 +44,7 @@ def send():
                 msg["From"] = f"{sender_name} <{sender_id}>"
                 msg["To"] = recipient
                 msg["Subject"] = subject
+
                 server.sendmail(sender_id, recipient, msg.as_string())
                 sent_count += 1
                 status = "Sent"
@@ -59,26 +53,46 @@ def send():
                 status = f"Failed: {e}"
 
             remaining = total - (sent_count + fail_count)
-            results.append({"recipient": recipient, "total": total,
-                            "sent": sent_count, "failed": fail_count,
-                            "remaining": remaining, "status": status})
-            time.sleep(2)  # normal delay
+            results.append({
+                "recipient": recipient,
+                "total": total,
+                "sent": sent_count,
+                "failed": fail_count,
+                "remaining": remaining,
+                "status": status
+            })
 
+            # Delay between emails
+            time.sleep(1.5)
+
+        # Invalid emails
         for recipient in invalid:
             fail_count += 1
             remaining = total - (sent_count + fail_count)
-            results.append({"recipient": recipient, "total": total,
-                            "sent": sent_count, "failed": fail_count,
-                            "remaining": remaining, "status": "Invalid email"})
+            results.append({
+                "recipient": recipient,
+                "total": total,
+                "sent": sent_count,
+                "failed": fail_count,
+                "remaining": remaining,
+                "status": "Invalid email"
+            })
+
     except Exception as e:
-        return jsonify([{"recipient": "ALL", "total": total,
-                         "sent": sent_count, "failed": fail_count,
-                         "remaining": max(0, total - (sent_count + fail_count)),
-                         "status": f"Connection error: {e}"}])
+        return jsonify([{
+            "recipient": "ALL",
+            "total": total,
+            "sent": sent_count,
+            "failed": fail_count,
+            "remaining": max(0, total - (sent_count + fail_count)),
+            "status": f"Connection error: {e}"
+        }])
     finally:
         if server:
-            try: server.quit()
-            except: pass
+            try:
+                server.quit()
+            except:
+                pass
 
     return jsonify(results)
 
