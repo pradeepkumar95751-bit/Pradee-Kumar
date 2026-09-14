@@ -1,144 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Email Sender</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>Bulk Email Sender</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
-
 <div class="dashboard">
-
-    <h2>Bulk Email Sender</h2>
-
-    <form id="mailForm">
-
-        <!-- Sender Name -->
-        <label for="sender_name">Sender Name:</label>
-        <input type="text" name="sender_name" id="sender_name" placeholder="E.g., John Doe" required>
-
-        <!-- Gmail -->
-        <label for="sender_id">Your Gmail:</label>
-        <input type="email" name="sender_id" id="sender_id" placeholder="you@gmail.com" required>
-
-        <!-- App Password -->
-        <label for="app_password">App Password:</label>
-        <input type="password" name="app_password" id="app_password" placeholder="16-character app password" required>
-
-        <!-- Subject -->
-        <label for="subject">Email Subject:</label>
-        <input type="text" name="subject" id="subject" placeholder="Enter subject line..." required>
-
-        <!-- Message -->
-        <label for="body">Message Body:</label>
-        <textarea name="body" id="body" rows="6" placeholder="Write your email here..." required></textarea>
-
-        <!-- Recipients -->
-        <label for="recipients">Recipients:</label>
-        <textarea name="recipients" id="recipients" rows="7" placeholder="Paste email addresses separated by commas or new lines..." required></textarea>
-
-        <p>Found: <span id="found">0</span></p>
-
-        <!-- Counters -->
-        <div class="counters">
-            <div>TOTAL: <span id="total">0</span></div>
-            <div>SENT: <span id="sent">0</span></div>
-            <div>FAILED: <span id="failed">0</span></div>
-            <div>REMAINING: <span id="remaining">0</span></div>
-        </div>
-
-        <!-- Status -->
-        <p id="status">Ready to send</p>
-
-        <!-- Send Button -->
-        <button type="submit" id="sendBtn">Send All</button>
-
-        <!-- Spam Protection Box -->
-        <div class="spam-box">
-            <span class="spam-success">✔ Success!</span>
-            <p class="spam-note">For testing only. If seen, report to site owner.</p>
-            <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
-        </div>
-
-    </form>
-
+  <h2>Bulk Email Sender</h2>
+  <form id="mailForm">
+    <label>Sender Name:</label>
+    <input type="text" name="sender_name" required>
+    <label>Your Gmail:</label>
+    <input type="email" name="sender_id" required>
+    <label>App Password:</label>
+    <input type="password" name="app_password" required>
+    <label>Subject:</label>
+    <input type="text" name="subject" required>
+    <label>Message:</label>
+    <textarea name="body" rows="6" required></textarea>
+    <label>Recipients:</label>
+    <textarea name="recipients" id="recipients" rows="6" required></textarea>
+    <p>Found: <span id="found">0</span></p>
+    <div class="counters">
+      <div>TOTAL: <span id="total">0</span></div>
+      <div>SENT: <span id="sent">0</span></div>
+      <div>FAILED: <span id="failed">0</span></div>
+      <div>REMAINING: <span id="remaining">0</span></div>
+    </div>
+    <p id="status">Ready to send</p>
+    <button type="submit" id="sendBtn">Send All</button>
+    <div class="spam-box">
+      <span class="spam-success">✔ Success!</span>
+      <p class="spam-note">For testing only. If seen, report to site owner.</p>
+      <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
+    </div>
+  </form>
 </div>
-
 <script>
-// =====================================================
-// RECIPIENT COUNTER
-// =====================================================
 const recipientsBox = document.getElementById("recipients");
 const foundCounter = document.getElementById("found");
-
 function getRecipients() {
-    const value = recipientsBox.value.replace(/,/g, "\n");
-    return value.split(/\r?\n/).map(email => email.trim()).filter(email => email !== "");
+  return recipientsBox.value.replace(/,/g,"\n").split(/\n/).map(e=>e.trim()).filter(e=>e);
 }
-
-function updateRecipientCount() {
-    const emails = getRecipients();
-    foundCounter.innerText = emails.length;
-    document.getElementById("total").innerText = emails.length;
-    document.getElementById("remaining").innerText = emails.length;
+function updateCount() {
+  const emails = getRecipients();
+  foundCounter.innerText = emails.length;
+  document.getElementById("total").innerText = emails.length;
+  document.getElementById("remaining").innerText = emails.length;
 }
-
-recipientsBox.addEventListener("input", updateRecipientCount);
-
-// =====================================================
-// FORM SUBMIT
-// =====================================================
-document.getElementById("mailForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(this);
-    const sendButton = document.getElementById("sendBtn");
-    const status = document.getElementById("status");
-
-    sendButton.disabled = true;
-    sendButton.innerText = "Sending...";
-    status.innerText = "Connecting to mail server...";
-
-    // Reset counters
-    document.getElementById("sent").innerText = "0";
-    document.getElementById("failed").innerText = "0";
-    updateRecipientCount();
-
-    fetch("/send", {
-        method: "POST",
-        body: formData
+recipientsBox.addEventListener("input", updateCount);
+document.getElementById("mailForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const btn = document.getElementById("sendBtn");
+  const status = document.getElementById("status");
+  btn.disabled = true; btn.innerText="Sending...";
+  status.innerText="Connecting...";
+  fetch("/send",{method:"POST",body:formData})
+    .then(r=>r.json())
+    .then(data=>{
+      data.forEach(u=>{
+        document.getElementById("total").innerText=u.total;
+        document.getElementById("sent").innerText=u.sent;
+        document.getElementById("failed").innerText=u.failed;
+        document.getElementById("remaining").innerText=u.remaining;
+        status.innerText=u.status+" → "+u.recipient;
+      });
+      btn.disabled=false; btn.innerText="Send All";
+      alert("Mail sending completed!");
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Server returned an error.");
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (!Array.isArray(data)) {
-            throw new Error("Invalid response format.");
-        }
-        data.forEach(update => {
-            document.getElementById("total").innerText = update.total;
-            document.getElementById("sent").innerText = update.sent;
-            document.getElementById("failed").innerText = update.failed;
-            document.getElementById("remaining").innerText = update.remaining;
-            status.innerText = update.status + " → " + update.recipient;
-        });
-        sendButton.disabled = false;
-        sendButton.innerText = "Send All";
-        alert("Mail sending completed!");
-    })
-    .catch(error => {
-        status.innerText = "Error occurred: " + error.message;
-        sendButton.disabled = false;
-        sendButton.innerText = "Send All";
+    .catch(err=>{
+      status.innerText="Error: "+err.message;
+      btn.disabled=false; btn.innerText="Send All";
     });
 });
 </script>
-
 </body>
 </html>
