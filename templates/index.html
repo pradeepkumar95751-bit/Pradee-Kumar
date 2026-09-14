@@ -1,13 +1,10 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Bulk Email Sender</title>
-
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
@@ -21,242 +18,127 @@
 
         <!-- Sender Name -->
         <label for="sender_name">Sender Name:</label>
-
-        <input
-            type="text"
-            name="sender_name"
-            id="sender_name"
-            placeholder="E.g., John Doe"
-            required
-        >
-
+        <input type="text" name="sender_name" id="sender_name" placeholder="E.g., John Doe" required>
 
         <!-- Gmail -->
         <label for="sender_id">Your Gmail:</label>
-
-        <input
-            type="email"
-            name="sender_id"
-            id="sender_id"
-            placeholder="you@gmail.com"
-            required
-        >
-
+        <input type="email" name="sender_id" id="sender_id" placeholder="you@gmail.com" required>
 
         <!-- App Password -->
         <label for="app_password">App Password:</label>
-
-        <input
-            type="password"
-            name="app_password"
-            id="app_password"
-            placeholder="16-character app password"
-            required
-        >
-
+        <input type="password" name="app_password" id="app_password" placeholder="16-character app password" required>
 
         <!-- Subject -->
         <label for="subject">Email Subject:</label>
-
-        <input
-            type="text"
-            name="subject"
-            id="subject"
-            placeholder="Enter subject line..."
-            required
-        >
-
+        <input type="text" name="subject" id="subject" placeholder="Enter subject line..." required>
 
         <!-- Message -->
         <label for="body">Message Body:</label>
-
-        <textarea
-            name="body"
-            id="body"
-            rows="6"
-            placeholder="Write your email here..."
-            required
-        ></textarea>
-
+        <textarea name="body" id="body" rows="6" placeholder="Write your email here..." required></textarea>
 
         <!-- Recipients -->
         <label for="recipients">Recipients:</label>
+        <textarea name="recipients" id="recipients" rows="7" placeholder="Paste email addresses separated by commas or new lines..." required></textarea>
 
-        <textarea
-            name="recipients"
-            id="recipients"
-            rows="7"
-            placeholder="Paste email addresses separated by commas or new lines..."
-            required
-        ></textarea>
-
-        <p>
-            Found:
-            <span id="found">0</span>
-        </p>
-
+        <p>Found: <span id="found">0</span></p>
 
         <!-- Counters -->
         <div class="counters">
-
-            <div>
-                TOTAL:
-                <span id="total">0</span>
-            </div>
-
-            <div>
-                SENT:
-                <span id="sent">0</span>
-            </div>
-
-            <div>
-                FAILED:
-                <span id="failed">0</span>
-            </div>
-
-            <div>
-                REMAINING:
-                <span id="remaining">0</span>
-            </div>
-
+            <div>TOTAL: <span id="total">0</span></div>
+            <div>SENT: <span id="sent">0</span></div>
+            <div>FAILED: <span id="failed">0</span></div>
+            <div>REMAINING: <span id="remaining">0</span></div>
         </div>
 
-
         <!-- Status -->
-        <p id="status">
-            Ready to send
-        </p>
-
+        <p id="status">Ready to send</p>
 
         <!-- Send Button -->
-        <button
-            type="submit"
-            id="sendBtn"
-        >
-            Send All
-        </button>
+        <button type="submit" id="sendBtn">Send All</button>
+
+        <!-- Spam Protection Box -->
+        <div class="spam-box">
+            <span class="spam-success">✔ Success!</span>
+            <p class="spam-note">For testing only. If seen, report to site owner.</p>
+            <div class="spam-footer">CLOUDFLARE • Privacy • Terms</div>
+        </div>
 
     </form>
 
 </div>
 
-
 <script>
+// =====================================================
+// RECIPIENT COUNTER
+// =====================================================
+const recipientsBox = document.getElementById("recipients");
+const foundCounter = document.getElementById("found");
 
-    // =====================================================
-    // RECIPIENT COUNTER
-    // =====================================================
+function getRecipients() {
+    const value = recipientsBox.value.replace(/,/g, "\n");
+    return value.split(/\r?\n/).map(email => email.trim()).filter(email => email !== "");
+}
 
-    const recipientsBox =
-        document.getElementById("recipients");
+function updateRecipientCount() {
+    const emails = getRecipients();
+    foundCounter.innerText = emails.length;
+    document.getElementById("total").innerText = emails.length;
+    document.getElementById("remaining").innerText = emails.length;
+}
 
-    const foundCounter =
-        document.getElementById("found");
+recipientsBox.addEventListener("input", updateRecipientCount);
 
+// =====================================================
+// FORM SUBMIT
+// =====================================================
+document.getElementById("mailForm").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    function getRecipients() {
+    const formData = new FormData(this);
+    const sendButton = document.getElementById("sendBtn");
+    const status = document.getElementById("status");
 
-        const value =
-            recipientsBox.value
-                .replace(/,/g, "\n");
+    sendButton.disabled = true;
+    sendButton.innerText = "Sending...";
+    status.innerText = "Connecting to mail server...";
 
-        return value
-            .split(/\r?\n/)
-            .map(email => email.trim())
-            .filter(email => email !== "");
+    // Reset counters
+    document.getElementById("sent").innerText = "0";
+    document.getElementById("failed").innerText = "0";
+    updateRecipientCount();
 
-    }
+    fetch("/send", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Server returned an error.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!Array.isArray(data)) {
+            throw new Error("Invalid response format.");
+        }
+        data.forEach(update => {
+            document.getElementById("total").innerText = update.total;
+            document.getElementById("sent").innerText = update.sent;
+            document.getElementById("failed").innerText = update.failed;
+            document.getElementById("remaining").innerText = update.remaining;
+            status.innerText = update.status + " → " + update.recipient;
+        });
+        sendButton.disabled = false;
+        sendButton.innerText = "Send All";
+        alert("Mail sending completed!");
+    })
+    .catch(error => {
+        status.innerText = "Error occurred: " + error.message;
+        sendButton.disabled = false;
+        sendButton.innerText = "Send All";
+    });
+});
+</script>
 
-
-    function updateRecipientCount() {
-
-        const emails =
-            getRecipients();
-
-        foundCounter.innerText =
-            emails.length;
-
-        document.getElementById("total").innerText =
-            emails.length;
-
-        document.getElementById("remaining").innerText =
-            emails.length;
-    }
-
-
-    recipientsBox.addEventListener(
-        "input",
-        updateRecipientCount
-    );
-
-
-    // =====================================================
-    // FORM SUBMIT
-    // =====================================================
-
-    document
-        .getElementById("mailForm")
-        .addEventListener("submit", function(event) {
-
-            event.preventDefault();
-
-
-            const form =
-                this;
-
-            const formData =
-                new FormData(form);
-
-            const sendButton =
-                document.getElementById("sendBtn");
-
-            const status =
-                document.getElementById("status");
-
-
-            // Disable button while request is running
-            sendButton.disabled = true;
-
-            sendButton.innerText =
-                "Sending...";
-
-            status.innerText =
-                "Connecting to mail server...";
-
-
-            // Reset counters
-            document.getElementById("sent").innerText =
-                "0";
-
-            document.getElementById("failed").innerText =
-                "0";
-
-            updateRecipientCount();
-
-
-            // =================================================
-            // SEND REQUEST
-            // =================================================
-
-            fetch("/send", {
-                method: "POST",
-                body: formData
-            })
-
-            .then(response => {
-
-                if (!response.ok) {
-                    throw new Error(
-                        "Server returned an error."
-                    );
-                }
-
-                return response.json();
-            })
-
-
-            .then(data => {
-
-                if (!Array.isArray(data)) {
-                    throw new Error(
-```
+</body>
+</html>
