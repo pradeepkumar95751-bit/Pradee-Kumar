@@ -48,24 +48,6 @@
 </div>
 
 <script>
-// Auto-fill Sender Name from Gmail ID (first word, numbers ignored)
-document.getElementById("sender_id").addEventListener("input", function(){
-    const email = this.value.trim();
-    if(email.includes("@")){
-        const username = email.split("@")[0];
-        const parts = username.split(/[._]/); 
-        const cleanParts = parts.map(p => p.replace(/[0-9]/g, ""));
-        let name = "";
-        for(let p of cleanParts){
-            if(p.length > 0){
-                name = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
-                break;
-            }
-        }
-        document.getElementById("sender_name").value = name;
-    }
-});
-
 // Count recipients
 document.getElementById("recipients").addEventListener("input", function(){
     const emails = this.value.replace(/,/g, "\n").split("\n").filter(e => e.trim() !== "");
