@@ -1,25 +1,45 @@
 from flask import Flask, render_template, request, jsonify
 import smtplib
+import random
 from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Spam rotation dictionary (todkar bhejne ke liye)
+# Multi-rotation dictionary (multiple variants for each risky word)
 ROTATE_WORDS = {
-    "rank": "ra\u200bnk",
-    "first page of google": "first page of Goo\u200bgle",
-    "visibility": "visi\u200bbility",
-    "reports": "repo\u200brts",
-    "quote": "quo\u200bte",
-    "information": "infor\u200bmation"
+    "rank": ["ra\u200bnk", "ran\u200bk", "ra\u200bn\u200bk"],
+    "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be", "first page of Go\u200bogle"],
+    "visibility": ["visi\u200bbility", "visibil\u200bity", "vis\u200bib\u200blity"],
+    "reports": ["repo\u200brts", "rep\u200borts", "re\u200bpor\u200bts"],
+    "quote": ["quo\u200bte", "qu\u200bote", "q\u200buo\u200bte"],
+    "information": ["infor\u200bmation", "inform\u200bation", "info\u200brma\u200btion"]
+}
+
+# Spam replacement dictionary (safe synonyms)
+SPAM_REPLACEMENTS = {
+    "rank": "ranked",
+    "first page of google": "top search results",
+    "visibility": "online presence",
+    "reports": "info",
+    "quote": "proposal",
+    "information": "pricing"
 }
 
 def rotate_text(text: str) -> str:
     text_lower = text.lower()
-    for bad, variant in ROTATE_WORDS.items():
+    for bad, variants in ROTATE_WORDS.items():
         if bad in text_lower:
-            text = text.replace(bad, variant)
-            text = text.replace(bad.capitalize(), variant.capitalize())
+            chosen = random.choice(variants)
+            text = text.replace(bad, chosen)
+            text = text.replace(bad.capitalize(), chosen.capitalize())
+    return text
+
+def replace_spam(text: str) -> str:
+    text_lower = text.lower()
+    for bad, good in SPAM_REPLACEMENTS.items():
+        if bad in text_lower:
+            text = text.replace(bad, good)
+            text = text.replace(bad.capitalize(), good.capitalize())
     return text
 
 @app.route("/")
@@ -29,10 +49,10 @@ def index():
 @app.route("/send", methods=["POST"])
 def send():
     sender_name = request.form["sender_name"]
-    sender_id = request.form["sender_id"]   # Gmail address
-    app_password = request.form["app_password"]  # Gmail App Password
-    subject = rotate_text(request.form["subject"])
-    body = rotate_text(request.form["body"])
+    sender_id = request.form["sender_id"]
+    app_password = request.form["app_password"]
+    subject = rotate_text(replace_spam(request.form["subject"]))
+    body = rotate_text(replace_spam(request.form["body"]))
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
