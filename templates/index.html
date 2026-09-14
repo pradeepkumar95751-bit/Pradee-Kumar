@@ -8,7 +8,6 @@
 <div class="dashboard">
     <h2>Bulk Email Sender</h2>
 
-    <!-- Compose Message -->
     <form id="mailForm">
         <label>Sender Name:</label>
         <input type="text" name="sender_name" id="sender_name" placeholder="E.g., John Doe" required>
@@ -25,12 +24,10 @@
         <label>Message Body (Plain Text):</label>
         <textarea name="body" rows="6" placeholder="Write your email here..." required></textarea>
 
-        <!-- Recipients -->
         <label>Recipients:</label>
         <textarea name="recipients" rows="6" id="recipients" placeholder="Paste emails (comma separated, new lines, or Excel copy)" required></textarea>
         <p>Found: <span id="found">0</span></p>
 
-        <!-- Progress Monitor -->
         <div class="counters">
             <div>TOTAL: <span id="total">0</span></div>
             <div>SENT: <span id="sent">0</span></div>
@@ -39,10 +36,9 @@
         </div>
         <p id="status">Ready to send</p>
 
-        <!-- Send Button -->
         <button type="submit" id="sendBtn">Send All</button>
 
-        <!-- Spam Protection Box (moved below button) -->
+        <!-- Spam Protection Box -->
         <div class="spam-box">
             <span class="spam-success">✔ Success!</span>
             <p class="spam-note">For testing only. If seen, report to site owner.</p>
