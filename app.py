@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import smtplib
 import random
+import time
 from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Multi-rotation dictionary (multiple variants for each risky word)
+# Multi-rotation dictionary
 ROTATE_WORDS = {
     "rank": ["ra\u200bnk", "ran\u200bk", "ra\u200bn\u200bk"],
     "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be", "first page of Go\u200bogle"],
@@ -15,14 +16,14 @@ ROTATE_WORDS = {
     "information": ["infor\u200bmation", "inform\u200bation", "info\u200brma\u200btion"]
 }
 
-# Spam replacement dictionary (safe synonyms)
+# Spam replacement dictionary
 SPAM_REPLACEMENTS = {
-    "rank": "ranked",
+    "rank": "position",
     "first page of google": "top search results",
     "visibility": "online presence",
-    "reports": "info",
+    "reports": "analysis",
     "quote": "proposal",
-    "information": "pricing"
+    "information": "insights"
 }
 
 def rotate_text(text: str) -> str:
@@ -91,6 +92,10 @@ def send():
                 "remaining": remaining,
                 "status": status
             })
+
+            # Normal sending speed (2 sec delay between mails)
+            time.sleep(2)
+
     except Exception as e:
         return jsonify([{"recipient":"ALL","total":total,"sent":sent_count,"failed":fail_count,"remaining":total,"status":f"Connection error: {e}"}])
     finally:
