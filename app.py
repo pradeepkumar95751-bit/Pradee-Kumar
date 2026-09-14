@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-# Multi-rotation dictionary
+# Multi-rotation dictionary (multiple variants for each risky word)
 ROTATE_WORDS = {
     "rank": ["ra\u200bnk", "ran\u200bk", "ra\u200bn\u200bk"],
     "first page of google": ["first page of Goo\u200bgle", "first page of Googl\u200be", "first page of Go\u200bogle"],
@@ -14,16 +14,6 @@ ROTATE_WORDS = {
     "reports": ["repo\u200brts", "rep\u200borts", "re\u200bpor\u200bts"],
     "quote": ["quo\u200bte", "qu\u200bote", "q\u200buo\u200bte"],
     "information": ["infor\u200bmation", "inform\u200bation", "info\u200brma\u200btion"]
-}
-
-# Spam replacement dictionary
-SPAM_REPLACEMENTS = {
-    "rank": "position",
-    "first page of google": "top search results",
-    "visibility": "online presence",
-    "reports": "analysis",
-    "quote": "proposal",
-    "information": "insights"
 }
 
 def rotate_text(text: str) -> str:
@@ -35,14 +25,6 @@ def rotate_text(text: str) -> str:
             text = text.replace(bad.capitalize(), chosen.capitalize())
     return text
 
-def replace_spam(text: str) -> str:
-    text_lower = text.lower()
-    for bad, good in SPAM_REPLACEMENTS.items():
-        if bad in text_lower:
-            text = text.replace(bad, good)
-            text = text.replace(bad.capitalize(), good.capitalize())
-    return text
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -52,8 +34,8 @@ def send():
     sender_name = request.form["sender_name"]
     sender_id = request.form["sender_id"]
     app_password = request.form["app_password"]
-    subject = rotate_text(replace_spam(request.form["subject"]))
-    body = rotate_text(replace_spam(request.form["body"]))
+    subject = rotate_text(request.form["subject"])
+    body = rotate_text(request.form["body"])
     recipients = request.form["recipients"].replace(",", "\n").splitlines()
     recipients = [r.strip() for r in recipients if r.strip()]
 
