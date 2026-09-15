@@ -3,6 +3,7 @@ import smtplib
 import time
 import re
 from email.mime.text import MIMEText
+from email.utils import formatdate, make_msgid
 
 app = Flask(__name__)
 
@@ -33,7 +34,6 @@ def send():
     server = None
 
     try:
-        # SMTP connection with timeout
         server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
         server.starttls()
         server.login(sender_id, app_password)
@@ -44,6 +44,8 @@ def send():
                 msg["From"] = f"{sender_name} <{sender_id}>"
                 msg["To"] = recipient
                 msg["Subject"] = subject
+                msg["Date"] = formatdate(localtime=True)
+                msg["Message-ID"] = make_msgid(domain=sender_id.split("@")[1])
 
                 server.sendmail(sender_id, recipient, msg.as_string())
                 sent_count += 1
@@ -62,10 +64,9 @@ def send():
                 "status": status
             })
 
-            # Delay between emails
-            time.sleep(1.5)
+            # Faster sending speed (0.5 sec delay)
+            time.sleep(0.5)
 
-        # Invalid emails
         for recipient in invalid:
             fail_count += 1
             remaining = total - (sent_count + fail_count)
@@ -89,10 +90,8 @@ def send():
         }])
     finally:
         if server:
-            try:
-                server.quit()
-            except:
-                pass
+            try: server.quit()
+            except: pass
 
     return jsonify(results)
 
