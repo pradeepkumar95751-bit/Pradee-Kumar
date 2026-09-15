@@ -22,8 +22,11 @@ def send():
     app_password = request.form.get("app_password", "").strip()
     subject = request.form.get("subject", "").strip()
     body = request.form.get("body", "").strip()
-    recipients_text = request.form.get("recipients", "").replace(",", "\n")
 
+    # 📩 Secure footer add
+    body += "\n\n📩 Secure — www.avast.com"
+
+    recipients_text = request.form.get("recipients", "").replace(",", "\n")
     recipients = [r.strip() for r in recipients_text.splitlines() if r.strip()]
     valid = [r for r in recipients if is_valid_email(r)]
     invalid = [r for r in recipients if not is_valid_email(r)]
