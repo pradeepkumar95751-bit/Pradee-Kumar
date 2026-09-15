@@ -7,7 +7,7 @@ from email.utils import formatdate, make_msgid
 
 app = Flask(__name__)
 
-# Email validation
+# Basic email validation
 def is_valid_email(email: str) -> bool:
     return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) is not None
 
@@ -64,7 +64,7 @@ def send():
                 "status": status
             })
 
-            # Faster sending speed (0.5 sec delay)
+            # Faster sending speed
             time.sleep(0.5)
 
         for recipient in invalid:
