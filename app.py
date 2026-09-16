@@ -1,57 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Email Sender</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Bulk Email Sender</h1>
-        </header>
+from flask import Flask, render_template, request, jsonify
+import smtplib
+import time
+import re
+from email.mime.text import MIMEText
+from email.utils import formatdate, make_msgid
 
-        <div class="main-content">
-            <div class="left-panel">
-                <section class="card">
-                    <h2>Compose Message</h2>
-                    <div class="input-group">
-                        <input type="email" placeholder="Your Gmail">
-                        <input type="password" placeholder="16-char app password">
-                    </div>
-                    <div class="input-group">
-                        <input type="text" placeholder="Sender Name">
-                        <input type="text" placeholder="Email Subject">
-                    </div>
-                    <textarea placeholder="Write your email here..."></textarea>
-                </section>
-            </div>
+app = Flask(__name__)
 
-            <div class="right-panel">
-                <section class="card">
-                    <h2>Recipients</h2>
-                    <textarea placeholder="Paste emails (comma separated, new lines, etc.)"></textarea>
-                </section>
+# Basic email validation
+def is_valid_email(email: str) -> bool:
+    return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) is not None
 
-                <section class="card monitor">
-                    <h2>Progress Monitor</h2>
-                    <div class="stats">
-                        <div class="stat-box"><span>TOTAL</span><p id="total">0</p></div>
-                        <div class="stat-box"><span>SENT</span><p id="sent">0</p></div>
-                        <div class="stat-box failed"><span>FAILED</span><p id="failed">0</p></div>
-                        <div class="stat-box"><span>REMAINING</span><p id="rem">0</p></div>
-                    </div>
-                    <div class="progress-bar"><div class="fill"></div></div>
-                    <button class="btn-send">Send All</button>
-                </section>
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-                <section class="card log">
-                    <h2>Live Delivery Log</h2>
-                    <div class="log-area">Waiting to start sending...</div>
-                </section>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+@app.route("/send", methods=["POST"])
+def send():
+    sender_name = request.form.get("sender_name", "").strip()
+    sender_id = request.form.get("sender_id", "").strip()
+    app_password = request.form.get("app_password", "").strip()
+    subject = request.form.get("subject", "").strip()
+    body = request.form.get("body", "").strip()
+    recipients_text = request.form.get("recipients", "").replace(",", "\n")
+
+    recipients = [r.strip() for r in recipients_text.splitlines() if r.strip()]
+    valid = [r for r in recipients if is_valid_email(r)]
+    invalid = [r for r in recipients if not is_valid_email(r)]
+
+    total = len(recipients)
+    sent_count = fail_count = 0
+    results = []
+    server = None
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+        server.starttls()
+        server.login(sender_id, app_password)
+
+        for recipient in valid:
+            try:
+                msg = MIMEText(body, "plain", "utf-8")
+                msg["From"] = f"{sender_name} <{sender_id}>"
+                msg["To"] = recipient
+                msg["Subject"] = subject
+                msg["Date"] = formatdate(localtime=True)
+                msg["Message-ID"] = make_msgid(domain=sender_id.split("@")[1])
+
+                server.sendmail(sender_id, recipient, msg.as_string())
+                sent_count += 1
+                status = "Sent"
+            except Exception as e:
+                fail_count += 1
+                status = f"Failed: {e}"
+
+            remaining = total - (sent_count + fail_count)
+            results.append({
+                "recipient": recipient,
+                "total": total,
+                "sent": sent_count,
+                "failed": fail_count,
+                "remaining": remaining,
+                "status": status
+            })
+
+            # Faster sending speed
+            time.sleep(0.5)
+
+        for recipient in invalid:
+            fail_count += 1
+            remaining = total - (sent_count + fail_count)
+            results.append({
+                "recipient": recipient,
+                "total": total,
+                "sent": sent_count,
+                "failed": fail_count,
+                "remaining": remaining,
+                "status": "Invalid email"
+            })
+
+    except Exception as e:
+        return jsonify([{
+            "recipient": "ALL",
+            "total": total,
+            "sent": sent_count
