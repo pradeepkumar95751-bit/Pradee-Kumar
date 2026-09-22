@@ -1,96 +1,116 @@
-from flask import Flask, render_template, request, jsonify
-import smtplib
-import time
-import re
-from email.mime.text import MIMEText
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-app = Flask(__name__)
+body{
+    background:#f5f7fb;
+    font-family:Segoe UI,Arial,sans-serif;
+    padding:20px;
+}
 
-# Basic email validation
-def is_valid_email(email: str) -> bool:
-    return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) is not None
+.container{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+.card{
+    background:#fff;
+    border:1px solid #e6ebf2;
+    border-radius:18px;
+    padding:20px;
+}
 
-@app.route("/send", methods=["POST"])
-def send():
-    sender_name = request.form.get("sender_name", "").strip()
-    sender_id = request.form.get("sender_id", "").strip()
-    app_password = request.form.get("app_password", "").strip()
-    subject = request.form.get("subject", "").strip()
-    body = request.form.get("body", "").strip()
-    recipients_text = request.form.get("recipients", "").replace(",", "\n")
+.title{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:20px;
+    color:#1f2937;
+}
 
-    recipients = [r.strip() for r in recipients_text.splitlines() if r.strip()]
-    valid = [r for r in recipients if is_valid_email(r)]
-    invalid = [r for r in recipients if not is_valid_email(r)]
+label{
+    display:block;
+    margin-top:14px;
+    margin-bottom:6px;
+    font-size:14px;
+    font-weight:600;
+}
 
-    total = len(recipients)
-    sent_count = fail_count = 0
-    results = []
-    server = None
+input,
+textarea{
+    width:100%;
+    border:1px solid #dbe2ea;
+    border-radius:12px;
+    padding:12px;
+    font-size:14px;
+}
 
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender_id, app_password)
+textarea{
+    resize:none;
+}
 
-        for recipient in valid:
-            try:
-                msg = MIMEText(body, "plain", "utf-8")
-                msg["From"] = f"{sender_name} <{sender_id}>"
-                msg["To"] = recipient
-                msg["Subject"] = subject
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
 
-                server.sendmail(sender_id, recipient, msg.as_string())
-                sent_count += 1
-                status = "Sent"
-            except Exception as e:
-                fail_count += 1
-                status = f"Failed: {e}"
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:15px;
+}
 
-            remaining = total - (sent_count + fail_count)
-            results.append({
-                "recipient": recipient,
-                "total": total,
-                "sent": sent_count,
-                "failed": fail_count,
-                "remaining": remaining,
-                "status": status
-            })
+.stat{
+    border:1px solid #dde4ee;
+    border-radius:14px;
+    text-align:center;
+    padding:20px;
+}
 
-            # Simple delay
-            time.sleep(1)
+.stat h4{
+    color:#94a3b8;
+    font-size:12px;
+}
 
-        for recipient in invalid:
-            fail_count += 1
-            remaining = total - (sent_count + fail_count)
-            results.append({
-                "recipient": recipient,
-                "total": total,
-                "sent": sent_count,
-                "failed": fail_count,
-                "remaining": remaining,
-                "status": "Invalid email"
-            })
+.stat span{
+    font-size:28px;
+    font-weight:700;
+    margin-top:10px;
+    display:block;
+}
 
-    except Exception as e:
-        return jsonify([{
-            "recipient": "ALL",
-            "total": total,
-            "sent": sent_count,
-            "failed": fail_count,
-            "remaining": max(0, total - (sent_count + fail_count)),
-            "status": f"Connection error: {e}"
-        }])
-    finally:
-        if server:
-            try: server.quit()
-            except: pass
+.send-btn{
+    width:100%;
+    margin-top:15px;
+    height:52px;
+    border:none;
+    border-radius:14px;
+    background:#2563eb;
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+}
 
-    return jsonify(results)
+.send-btn:hover{
+    background:#1d4ed8;
+}
 
-if __name__ == "__main__":
-    app.run(debug=True)
+.status{
+    margin-top:15px;
+    padding:10px;
+    border-radius:10px;
+    background:#eef6ff;
+    color:#1e40af;
+    text-align:center;
+}
+
+.email-count{
+    font-size:14px;
+    margin-top:10px;
+    color:#64748b;
+}
