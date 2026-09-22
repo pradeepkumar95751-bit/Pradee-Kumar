@@ -1,75 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>Bulk Email Sender</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <title>Bulk Email Sender</title>
+    /static/style.css
 </head>
+
 <body>
-<div class="dashboard">
-  <h2>Bulk Email Sender</h2>
-  <form id="mailForm">
-    <label>Sender Name:</label>
-    <input type="text" name="sender_name" required>
-    <label>Your Gmail:</label>
-    <input type="email" name="sender_id" required>
-    <label>App Password:</label>
-    <input type="password" name="app_password" required>
-    <label>Subject:</label>
-    <input type="text" name="subject" required>
-    <label>Message:</label>
-    <textarea name="body" rows="6" required></textarea>
-    <label>Recipients:</label>
-    <textarea name="recipients" id="recipients" rows="6" required></textarea>
-    <p>Found: <span id="found">0</span></p>
-    <div class="counters">
-      <div>TOTAL: <span id="total">0</span></div>
-      <div>SENT: <span id="sent">0</span></div>
-      <div>FAILED: <span id="failed">0</span></div>
-      <div>REMAINING: <span id="remaining">0</span></div>
+
+<div class="container">
+
+    <div class="left-card">
+
+        <h2>✏ Compose Message</h2>
+
+        <form id="mailForm">
+
+            <div class="row">
+
+                <div class="field">
+                    <label>Sender Name</label>
+                    <input type="text"
+                           name="sender_name"
+                           placeholder="John Doe">
+                </div>
+
+                <div class="field">
+                    <label>Your Gmail</label>
+                    <input type="email"
+                           name="sender_id"
+                           placeholder="you@gmail.com"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="field">
+                    <label>16-Digit App Password</label>
+                    <input type="password"
+                           name="app_password"
+                           required>
+                </div>
+
+                <div class="field">
+                    <label>Email Subject</label>
+                    <input type="text"
+                           name="subject"
+                           required>
+                </div>
+
+            </div>
+
+            <label>Message Body</label>
+
+            <textarea
+                name="body"
+                rows="12"
+                placeholder="Write your email here..."
+                required
+            ></textarea>
+
+        </form>
+
     </div>
-    <p id="status">Ready to send</p>
-    <button type="submit" id="sendBtn">Send All</button>
-  </form>
+
+    <div class="right-panel">
+
+        <div class="card">
+
+            <h2>👥 Recipients List</h2>
+
+            <textarea
+                id="recipients"
+                form="mailForm"
+                name="recipients"
+                rows="9"
+                placeholder="Paste emails..."
+            ></textarea>
+
+            <p class="count">
+                Found Emails:
+                <span id="found">0</span>
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📊 Delivery Progress</h2>
+
+            <div class="stats">
+
+                <div class="box">
+                    <span id="total">0</span>
+                    <small>TOTAL</small>
+                </div>
+
+                <div class="box">
+                    <span id="sent">0</span>
+                    <small>SENT</small>
+                </div>
+
+                <div class="box">
+                    <span id="failed">0</span>
+                    <small>FAILED</small>
+                </div>
+
+                <div class="box">
+                    <span id="remaining">0</span>
+                    <small>REMAINING</small>
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                form="mailForm"
+                id="sendBtn"
+                class="send-btn">
+                ✈ Send Bulk Emails
+            </button>
+
+            <div id="status" class="status">
+                Ready to send
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
 <script>
-const recipientsBox = document.getElementById("recipients");
-const foundCounter = document.getElementById("found");
-function getRecipients() {
-  return recipientsBox.value.replace(/,/g,"\n").split(/\n/).map(e=>e.trim()).filter(e=>e);
+
+const recipients =
+document.getElementById("recipients");
+
+function updateCount(){
+
+    let emails =
+    recipients.value
+    .replace(/,/g,"\n")
+    .split(/\n/)
+    .filter(x=>x.trim());
+
+    document.getElementById("found").innerText =
+    emails.length;
+
+    document.getElementById("total").innerText =
+    emails.length;
+
+    document.getElementById("remaining").innerText =
+    emails.length;
 }
-function updateCount() {
-  const emails = getRecipients();
-  foundCounter.innerText = emails.length;
-  document.getElementById("total").innerText = emails.length;
-  document.getElementById("remaining").innerText = emails.length;
-}
-recipientsBox.addEventListener("input", updateCount);
-document.getElementById("mailForm").addEventListener("submit", e=>{
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const btn = document.getElementById("sendBtn");
-  const status = document.getElementById("status");
-  btn.disabled = true; btn.innerText="Sending...";
-  status.innerText="Connecting...";
-  fetch("/send",{method:"POST",body:formData})
-    .then(r=>r.json())
-    .then(data=>{
-      data.forEach(u=>{
-        document.getElementById("total").innerText=u.total;
-        document.getElementById("sent").innerText=u.sent;
-        document.getElementById("failed").innerText=u.failed;
-        document.getElementById("remaining").innerText=u.remaining;
-        status.innerText=u.status+" → "+u.recipient;
-      });
-      btn.disabled=false; btn.innerText="Send All";
-      alert("Mail sending completed!");
-    })
-    .catch(err=>{
-      status.innerText="Error: "+err.message;
-      btn.disabled=false; btn.innerText="Send All";
-    });
-});
-</script>
-</body>
-</html>
+
+recipients.addEventListener(
+"input",
+updateCount
+);
+
+document
+.getElementById("mailForm")
+.addEventListener("submit",function(e){
+
+    e.preventDefault();
+
+    const formData =
+    new FormData(this);
+
+    const btn =
+    document.getElementById("sendBtn");
+
+    btn.disabled = true;
+
+    fetch("/send",{
+        method:"POST",
+        
