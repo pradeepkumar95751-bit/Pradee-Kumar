@@ -1,116 +1,102 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+from flask import Flask, render_template, request, jsonify
+import smtplib
+import re
+from email.mime.text import MIMEText
 
-body{
-    background:#f5f7fb;
-    font-family:Segoe UI,Arial,sans-serif;
-    padding:20px;
-}
+app = Flask(__name__)
 
-.container{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:20px;
-}
+def is_valid_email(email):
+    pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+    return re.match(pattern, email)
 
-.card{
-    background:#fff;
-    border:1px solid #e6ebf2;
-    border-radius:18px;
-    padding:20px;
-}
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-.title{
-    font-size:20px;
-    font-weight:600;
-    margin-bottom:20px;
-    color:#1f2937;
-}
+@app.route("/send", methods=["POST"])
+def send():
 
-label{
-    display:block;
-    margin-top:14px;
-    margin-bottom:6px;
-    font-size:14px;
-    font-weight:600;
-}
+    sender_name = request.form.get("sender_name", "")
+    sender_id = request.form.get("sender_id", "")
+    app_password = request.form.get("app_password", "")
+    subject = request.form.get("subject", "")
+    body = request.form.get("body", "")
 
-input,
-textarea{
-    width:100%;
-    border:1px solid #dbe2ea;
-    border-radius:12px;
-    padding:12px;
-    font-size:14px;
-}
+    recipients_text = request.form.get("recipients", "")
+    recipients_text = recipients_text.replace(",", "\n")
 
-textarea{
-    resize:none;
-}
+    recipients = [
+        x.strip()
+        for x in recipients_text.splitlines()
+        if x.strip()
+    ]
 
-.row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
+    total = len(recipients)
+    sent = 0
+    failed = 0
 
-.stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:15px;
-}
+    results = []
 
-.stat{
-    border:1px solid #dde4ee;
-    border-radius:14px;
-    text-align:center;
-    padding:20px;
-}
+    try:
 
-.stat h4{
-    color:#94a3b8;
-    font-size:12px;
-}
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_id, app_password)
 
-.stat span{
-    font-size:28px;
-    font-weight:700;
-    margin-top:10px;
-    display:block;
-}
+        for email in recipients:
 
-.send-btn{
-    width:100%;
-    margin-top:15px;
-    height:52px;
-    border:none;
-    border-radius:14px;
-    background:#2563eb;
-    color:#fff;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-}
+            try:
 
-.send-btn:hover{
-    background:#1d4ed8;
-}
+                if not is_valid_email(email):
+                    raise Exception("Invalid Email")
 
-.status{
-    margin-top:15px;
-    padding:10px;
-    border-radius:10px;
-    background:#eef6ff;
-    color:#1e40af;
-    text-align:center;
-}
+                msg = MIMEText(body)
 
-.email-count{
-    font-size:14px;
-    margin-top:10px;
-    color:#64748b;
-}
+                msg["From"] = f"{sender_name} <{sender_id}>"
+                msg["To"] = email
+                msg["Subject"] = subject
+
+                server.sendmail(
+                    sender_id,
+                    email,
+                    msg.as_string()
+                )
+
+                sent += 1
+
+                status = "Sent"
+
+            except Exception as e:
+
+                failed += 1
+
+                status = str(e)
+
+            results.append({
+                "recipient": email,
+                "total": total,
+                "sent": sent,
+                "failed": failed,
+                "remaining": total - sent - failed,
+                "status": status
+            })
+
+        server.quit()
+
+        return jsonify(results)
+
+    except Exception as e:
+
+        return jsonify([
+            {
+                "recipient": "Server",
+                "total": total,
+                "sent": 0,
+                "failed": total,
+                "remaining": total,
+                "status": str(e)
+            }
+        ])
+
+if __name__ == "__main__":
+    app.run(debug=True)
