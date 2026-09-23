@@ -9,49 +9,114 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Bulk Email Sender</title>
+    <title>Bulk Mail Sender</title>
 
-     }}"
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
     >
 </head>
 
 <body>
 
-<main class="page-shell">
+<main class="app-shell">
 
-    <div class="email-dashboard">
+    <!-- =========================================
+         HEADER
+    ========================================== -->
 
-        <!-- LEFT COLUMN -->
-        <section class="panel compose-panel">
+    <header class="top-header">
 
-            <div class="panel-heading">
-                <span class="heading-icon">✎</span>
+        <div class="brand-area">
 
-                <h1>Compose Message</h1>
+            <div class="brand-icon">
+                ✉
             </div>
 
-            <form id="mailForm">
+            <div>
+                <h1>Bulk Mail Sender</h1>
+
+                <p>
+                    Fast 16-Digit App Password Email Dispatcher
+                </p>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            id="resetBtn"
+            class="reset-button"
+        >
+            ↻ &nbsp; Reset Fields
+        </button>
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN GRID
+    ========================================== -->
+
+    <div class="main-grid">
+
+        <!-- =====================================
+             LEFT SIDE
+        ====================================== -->
+
+        <section class="card compose-card">
+
+            <div class="card-heading">
+
+                <div class="heading-left">
+                    <span class="heading-symbol">♧</span>
+                    <h2>Compose Message</h2>
+                </div>
+
+                <div class="personalization">
+                    Personalization:
+                    <strong>{0}, {name}</strong>
+                </div>
+
+            </div>
+
+
+            <form
+                id="mailForm"
+                enctype="multipart/form-data"
+            >
+
+                <!-- =================================
+                     SENDER / GMAIL
+                ================================== -->
 
                 <div class="form-grid">
 
                     <div class="field">
+
                         <label for="sender_name">
                             Sender Name
+                            <span class="optional">
+                                (Optional)
+                            </span>
                         </label>
 
                         <input
                             type="text"
                             id="sender_name"
                             name="sender_name"
-                            placeholder="E.g., John Doe"
+                            placeholder="e.g. John Doe / Company"
                             autocomplete="name"
-                            required
                         >
+
                     </div>
 
+
                     <div class="field">
+
                         <label for="sender_email">
                             Your Gmail
+                            <span class="required">*</span>
                         </label>
 
                         <input
@@ -62,19 +127,34 @@
                             autocomplete="email"
                             required
                         >
+
                     </div>
 
+
                     <div class="field">
+
                         <label for="app_password">
-                            App Password
+
+                            16-Digit App Password
+                            <span class="required">*</span>
+
+                            <button
+                                type="button"
+                                id="guideBtn"
+                                class="guide-button"
+                            >
+                                ? Guide
+                            </button>
+
                         </label>
 
-                        <div class="password-field">
+                        <div class="password-wrapper">
+
                             <input
                                 type="password"
                                 id="app_password"
                                 name="app_password"
-                                placeholder="16-char app password"
+                                placeholder="xxxx xxxx xxxx xxxx"
                                 autocomplete="new-password"
                                 required
                             >
@@ -82,163 +162,359 @@
                             <button
                                 type="button"
                                 id="passwordToggle"
-                                class="password-toggle"
-                                aria-label="Show or hide password"
+                                class="eye-button"
+                                aria-label="Show password"
                             >
                                 ◉
                             </button>
+
                         </div>
+
                     </div>
 
+
                     <div class="field">
+
                         <label for="subject">
                             Email Subject
+                            <span class="required">*</span>
                         </label>
 
                         <input
                             type="text"
                             id="subject"
                             name="subject"
-                            placeholder="Enter subject line..."
+                            placeholder="Subject of the email..."
                             maxlength="180"
                             required
                         >
+
                     </div>
 
                 </div>
 
-                <div class="field message-field">
-                    <label for="body">
-                        Message Body (Plain Text)
-                    </label>
+
+                <!-- =================================
+                     MESSAGE BODY
+                ================================== -->
+
+                <div class="message-section">
+
+                    <div class="message-heading">
+
+                        <label for="body">
+                            Message Body
+                            <span class="required">*</span>
+                        </label>
+
+                        <span id="messageStats">
+                            0 characters • 1 lines
+                        </span>
+
+                    </div>
+
+
+                    <!-- FONT BAR -->
+
+                    <div class="font-toolbar">
+
+                        <div class="font-title">
+                            T
+                            <span>
+                                Message Body Font Design:
+                            </span>
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="font-preset active"
+                            data-font="system"
+                        >
+                            Default Clean (System Sans)
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="fancyFontBtn"
+                            class="fancy-button"
+                        >
+                            ✣ Fancy Font Stylizer
+                        </button>
+
+
+                        <select
+                            id="fontSelector"
+                            name="font_key"
+                        >
+
+                            {% for key, font in fonts.items() %}
+
+                            <option
+                                value="{{ key }}"
+                                {% if key == "system" %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ key|capitalize }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
 
                     <textarea
                         id="body"
                         name="body"
-                        rows="14"
-                        placeholder="Write your email here..."
+                        rows="10"
+                        placeholder="Write your email body here... Select any of the 20 font designs above or click Fancy Font Stylizer!"
                         required
                     ></textarea>
 
-                    <div class="character-count">
-                        <span id="characterCount">0</span>
-                        characters
-                    </div>
                 </div>
 
-                <div class="content-check">
-                    <div class="content-check-title">
-                        <span>●</span>
-                        Content Check
-                    </div>
 
-                    <div class="check-card">
-                        <div class="check-mark">✓</div>
+                <!-- =================================
+                     PDF ATTACHMENT
+                ================================== -->
+
+                <section class="attachment-card">
+
+                    <div class="attachment-info">
+
+                        <div class="attachment-icon">
+                            ▣
+                        </div>
 
                         <div>
-                            <strong>Ready</strong>
+
+                            <strong>
+                                MESSAGE BODY PDF ATTACHMENT
+                            </strong>
 
                             <p>
-                                Message will be sent as plain text.
+                                Message body mein PDF attach karne ke
+                                liye file select karein.
                             </p>
+
                         </div>
+
                     </div>
-                </div>
+
+
+                    <div class="attachment-actions">
+
+                        <label
+                            for="pdfFile"
+                            class="pdf-select-button"
+                        >
+                            Choose PDF
+                        </label>
+
+                        <input
+                            type="file"
+                            id="pdfFile"
+                            name="pdf_file"
+                            accept=".pdf,application/pdf"
+                            hidden
+                        >
+
+                        <button
+                            type="button"
+                            id="previewPdfBtn"
+                            class="preview-button"
+                            disabled
+                        >
+                            ↗ Preview PDF
+                        </button>
+
+                        <button
+                            type="button"
+                            id="removePdfBtn"
+                            class="remove-pdf-button"
+                            disabled
+                        >
+                            Remove
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="pdfInfo"
+                        class="pdf-info"
+                    >
+                        No PDF attached
+                    </div>
+
+                </section>
 
             </form>
 
         </section>
 
 
-        <!-- RIGHT COLUMN -->
+        <!-- =====================================
+             RIGHT SIDE
+        ====================================== -->
+
         <aside class="right-column">
 
-            <!-- RECIPIENTS -->
-            <section class="panel recipients-panel">
 
-                <div class="panel-heading recipients-heading">
+            <!-- =================================
+                 RECIPIENTS
+            ================================== -->
 
-                    <div class="heading-title">
-                        <span class="heading-icon">♟</span>
-                        <h2>Recipients</h2>
+            <section class="card recipients-card">
+
+                <div class="card-heading">
+
+                    <div class="heading-left">
+
+                        <span class="heading-symbol">
+                            ♧
+                        </span>
+
+                        <h2>
+                            Recipients List
+                        </h2>
+
                     </div>
 
-                    <span class="found-badge">
-                        <span id="found">0</span> found
+                    <span
+                        id="emailBadge"
+                        class="email-badge"
+                    >
+                        0 Emails
                     </span>
 
                 </div>
 
-                <p class="helper-text">
-                    Paste emails separated by commas or new lines
-                </p>
 
                 <textarea
                     id="recipients"
                     name="recipients"
                     form="mailForm"
-                    rows="7"
-                    placeholder="recipient1@example.com&#10;recipient2@example.com"
+                    rows="5"
+                    placeholder="Paste client emails (one per line or comma separated)..."
                     required
                 ></textarea>
+
+
+                <button
+                    type="button"
+                    id="sampleBtn"
+                    class="sample-button"
+                >
+                    ✣ Load 25 Sample Emails
+                </button>
 
             </section>
 
 
-            <!-- PROGRESS -->
-            <section class="panel progress-panel">
+            <!-- =================================
+                 PROGRESS
+            ================================== -->
 
-                <div class="panel-heading">
-                    <span class="heading-icon">◔</span>
-                    <h2>Progress Monitor</h2>
+            <section class="card progress-card">
+
+                <div class="progress-title">
+                    Delivery Progress
                 </div>
+
 
                 <div class="stats-grid">
 
-                    <div class="stat-card">
-                        <span class="stat-label">TOTAL</span>
-                        <strong id="total" class="total-value">0</strong>
+                    <div class="stat-box">
+
+                        <span>
+                            TOTAL
+                        </span>
+
+                        <strong
+                            id="total"
+                            class="total-value"
+                        >
+                            0
+                        </strong>
+
                     </div>
 
-                    <div class="stat-card">
-                        <span class="stat-label">SENT</span>
-                        <strong id="sent" class="sent-value">0</strong>
+
+                    <div class="stat-box">
+
+                        <span>
+                            SENT
+                        </span>
+
+                        <strong
+                            id="sent"
+                            class="sent-value"
+                        >
+                            0
+                        </strong>
+
                     </div>
 
-                    <div class="stat-card">
-                        <span class="stat-label">FAILED</span>
-                        <strong id="failed" class="failed-value">0</strong>
+
+                    <div class="stat-box">
+
+                        <span>
+                            FAILED
+                        </span>
+
+                        <strong
+                            id="failed"
+                            class="failed-value"
+                        >
+                            0
+                        </strong>
+
                     </div>
 
-                    <div class="stat-card">
-                        <span class="stat-label">REMAINING</span>
+
+                    <div class="stat-box">
+
+                        <span>
+                            REMAINING
+                        </span>
+
                         <strong
                             id="remaining"
                             class="remaining-value"
                         >
                             0
                         </strong>
+
                     </div>
 
                 </div>
 
-                <div
-                    class="progress-track"
-                    role="progressbar"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="0"
-                >
+
+                <div class="progress-track">
+
                     <div
                         id="progressBar"
                         class="progress-bar"
                     ></div>
+
                 </div>
 
-                <div id="status" class="status-message">
-                    <span class="status-icon">●</span>
-                    <span id="statusText">Ready to send</span>
+
+                <div class="delivery-status">
+
+                    <span class="status-dot"></span>
+
+                    <span id="statusText">
+                        Ready to send
+                    </span>
+
                 </div>
+
 
                 <button
                     type="submit"
@@ -247,7 +523,9 @@
                     class="send-button"
                 >
                     <span>➤</span>
-                    <span id="sendButtonText">Send All</span>
+                    <span id="sendButtonText">
+                        Send Bulk Emails
+                    </span>
                 </button>
 
             </section>
@@ -259,148 +537,612 @@
 </main>
 
 
+<!-- =========================================
+     GUIDE MODAL
+========================================== -->
+
 <div
-    id="completionModal"
+    id="guideModal"
     class="modal"
     aria-hidden="true"
 >
+
     <div class="modal-card">
-
-        <div class="modal-icon">✓</div>
-
-        <h3>Sending completed</h3>
-
-        <p id="modalMessage">
-            Your email operation has finished.
-        </p>
 
         <button
             type="button"
-            id="closeModal"
+            class="modal-close"
+            id="closeGuide"
+        >
+            ×
+        </button>
+
+        <h3>
+            Gmail App Password
+        </h3>
+
+        <p>
+            Gmail SMTP ke liye normal Gmail password ki jagah
+            Google ka 16-character App Password use karein.
+        </p>
+
+        <ol>
+
+            <li>
+                Google Account mein 2-Step Verification enable karein.
+            </li>
+
+            <li>
+                App Password create karein.
+            </li>
+
+            <li>
+                Yahan generated 16-character password enter karein.
+            </li>
+
+        </ol>
+
+        <button
+            type="button"
             class="modal-button"
+            id="closeGuideButton"
         >
             Close
         </button>
 
     </div>
+
+</div>
+
+
+<!-- =========================================
+     COMPLETION MODAL
+========================================== -->
+
+<div
+    id="completionModal"
+    class="modal"
+    aria-hidden="true"
+>
+
+    <div class="modal-card completion-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h3>
+            Sending completed
+        </h3>
+
+        <p id="modalMessage">
+            Email operation has finished.
+        </p>
+
+        <button
+            type="button"
+            class="modal-button"
+            id="closeModal"
+        >
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     PDF PREVIEW MODAL
+========================================== -->
+
+<div
+    id="pdfModal"
+    class="modal"
+    aria-hidden="true"
+>
+
+    <div class="pdf-modal-card">
+
+        <button
+            type="button"
+            class="modal-close"
+            id="closePdf"
+        >
+            ×
+        </button>
+
+        <h3>
+            PDF Preview
+        </h3>
+
+        <iframe
+            id="pdfFrame"
+            title="PDF Preview"
+        ></iframe>
+
+    </div>
+
 </div>
 
 
 <script>
-    const form = document.getElementById("mailForm");
-    const recipientsBox = document.getElementById("recipients");
 
-    const foundElement = document.getElementById("found");
-    const totalElement = document.getElementById("total");
-    const sentElement = document.getElementById("sent");
-    const failedElement = document.getElementById("failed");
-    const remainingElement = document.getElementById("remaining");
+    /* =========================================
+       ELEMENTS
+    ========================================== */
 
-    const statusText = document.getElementById("statusText");
-    const sendButton = document.getElementById("sendBtn");
-    const sendButtonText = document.getElementById("sendButtonText");
+    const form =
+        document.getElementById("mailForm");
 
-    const progressTrack = document.querySelector(".progress-track");
-    const progressBar = document.getElementById("progressBar");
+    const senderName =
+        document.getElementById("sender_name");
 
-    const bodyBox = document.getElementById("body");
-    const characterCount = document.getElementById("characterCount");
+    const senderEmail =
+        document.getElementById("sender_email");
 
-    const passwordInput = document.getElementById("app_password");
-    const passwordToggle = document.getElementById("passwordToggle");
+    const appPassword =
+        document.getElementById("app_password");
 
-    const modal = document.getElementById("completionModal");
-    const modalMessage = document.getElementById("modalMessage");
-    const closeModal = document.getElementById("closeModal");
+    const subject =
+        document.getElementById("subject");
 
+    const bodyBox =
+        document.getElementById("body");
+
+    const recipientsBox =
+        document.getElementById("recipients");
+
+    const sendButton =
+        document.getElementById("sendBtn");
+
+    const sendButtonText =
+        document.getElementById("sendButtonText");
+
+    const totalElement =
+        document.getElementById("total");
+
+    const sentElement =
+        document.getElementById("sent");
+
+    const failedElement =
+        document.getElementById("failed");
+
+    const remainingElement =
+        document.getElementById("remaining");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const statusText =
+        document.getElementById("statusText");
+
+    const emailBadge =
+        document.getElementById("emailBadge");
+
+    const messageStats =
+        document.getElementById("messageStats");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    const resetBtn =
+        document.getElementById("resetBtn");
+
+    const sampleBtn =
+        document.getElementById("sampleBtn");
+
+    const fontSelector =
+        document.getElementById("fontSelector");
+
+    const fancyFontBtn =
+        document.getElementById("fancyFontBtn");
+
+    const pdfFile =
+        document.getElementById("pdfFile");
+
+    const pdfInfo =
+        document.getElementById("pdfInfo");
+
+    const previewPdfBtn =
+        document.getElementById("previewPdfBtn");
+
+    const removePdfBtn =
+        document.getElementById("removePdfBtn");
+
+    const guideBtn =
+        document.getElementById("guideBtn");
+
+    const guideModal =
+        document.getElementById("guideModal");
+
+    const closeGuide =
+        document.getElementById("closeGuide");
+
+    const closeGuideButton =
+        document.getElementById("closeGuideButton");
+
+    const completionModal =
+        document.getElementById("completionModal");
+
+    const modalMessage =
+        document.getElementById("modalMessage");
+
+    const closeModal =
+        document.getElementById("closeModal");
+
+    const pdfModal =
+        document.getElementById("pdfModal");
+
+    const pdfFrame =
+        document.getElementById("pdfFrame");
+
+    const closePdf =
+        document.getElementById("closePdf");
+
+
+    let currentPdfUrl = null;
+
+
+    /* =========================================
+       RECIPIENT PARSER
+    ========================================== */
 
     function getRecipients() {
-        return recipientsBox.value
-            .replace(/[;,]/g, "\n")
-            .split(/\s+/)
-            .map(email => email.trim())
-            .filter(email => email !== "");
+
+        const value =
+            recipientsBox.value
+                .replace(/[;,]/g, "\n");
+
+        const items =
+            value
+                .split(/\s+/)
+                .map(item => item.trim())
+                .filter(Boolean);
+
+        return [...new Set(items)];
     }
 
 
     function updateRecipientCount() {
-        const recipients = [...new Set(getRecipients())];
 
-        foundElement.textContent = recipients.length;
-        totalElement.textContent = recipients.length;
-        remainingElement.textContent = recipients.length;
+        const recipients =
+            getRecipients();
+
+        emailBadge.textContent =
+            `${recipients.length} Emails`;
+
+        totalElement.textContent =
+            recipients.length;
+
+        remainingElement.textContent =
+            recipients.length;
 
         if (!sendButton.disabled) {
+
             sentElement.textContent = "0";
             failedElement.textContent = "0";
-            updateProgress(0, recipients.length);
+
+            updateProgress(
+                0,
+                recipients.length
+            );
         }
     }
 
 
-    function updateProgress(processed, total) {
-        const percentage = total > 0
-            ? Math.round((processed / total) * 100)
-            : 0;
+    /* =========================================
+       MESSAGE STATS
+    ========================================== */
 
-        progressBar.style.width = `${percentage}%`;
-        progressTrack.setAttribute(
-            "aria-valuenow",
-            String(percentage)
-        );
+    function updateMessageStats() {
+
+        const text =
+            bodyBox.value;
+
+        const characters =
+            text.length;
+
+        const lines =
+            text.length === 0
+                ? 1
+                : text.split("\n").length;
+
+        messageStats.textContent =
+            `${characters} characters • ${lines} lines`;
+    }
+
+
+    /* =========================================
+       PROGRESS
+    ========================================== */
+
+    function updateProgress(
+        processed,
+        total
+    ) {
+
+        const percentage =
+            total > 0
+                ? Math.round(
+                    (processed / total) * 100
+                )
+                : 0;
+
+        progressBar.style.width =
+            `${percentage}%`;
     }
 
 
     function updateDashboard(item) {
-        totalElement.textContent = item.total ?? 0;
-        sentElement.textContent = item.sent ?? 0;
-        failedElement.textContent = item.failed ?? 0;
-        remainingElement.textContent = item.remaining ?? 0;
+
+        totalElement.textContent =
+            item.total ?? 0;
+
+        sentElement.textContent =
+            item.sent ?? 0;
+
+        failedElement.textContent =
+            item.failed ?? 0;
+
+        remainingElement.textContent =
+            item.remaining ?? 0;
+
 
         const processed =
             Number(item.sent ?? 0) +
             Number(item.failed ?? 0);
+
 
         updateProgress(
             processed,
             Number(item.total ?? 0)
         );
 
-        if (item.message) {
-            statusText.textContent = item.message;
-        }
 
-        if (item.recipient && item.type === "progress") {
-            statusText.textContent =
-                `${item.message}: ${item.recipient}`;
+        if (item.message) {
+
+            if (item.recipient) {
+
+                statusText.textContent =
+                    `${item.message}: ${item.recipient}`;
+
+            } else {
+
+                statusText.textContent =
+                    item.message;
+            }
         }
     }
 
 
-    function setSendingState(isSending) {
-        sendButton.disabled = isSending;
-        sendButtonText.textContent = isSending
-            ? "Sending..."
-            : "Send All";
+    /* =========================================
+       SENDING STATE
+    ========================================== */
+
+    function setSendingState(
+        isSending
+    ) {
+
+        sendButton.disabled =
+            isSending;
+
+        sendButtonText.textContent =
+            isSending
+                ? "Sending..."
+                : "Send Bulk Emails";
+
 
         document
             .querySelectorAll(
-                "#mailForm input, #mailForm textarea"
+                "#mailForm input:not(#pdfFile), #mailForm textarea, #fontSelector"
             )
             .forEach(element => {
-                element.disabled = isSending;
+
+                element.disabled =
+                    isSending;
             });
 
-        recipientsBox.disabled = isSending;
+
+        sampleBtn.disabled =
+            isSending;
+
+        resetBtn.disabled =
+            isSending;
     }
 
 
-    function showCompletionModal(message) {
-        modalMessage.textContent = message;
-        modal.classList.add("show");
-        modal.setAttribute("aria-hidden", "false");
+    /* =========================================
+       PASSWORD TOGGLE
+    ========================================== */
+
+    passwordToggle.addEventListener(
+        "click",
+        () => {
+
+            const hidden =
+                appPassword.type === "password";
+
+            appPassword.type =
+                hidden
+                    ? "text"
+                    : "password";
+
+            passwordToggle.textContent =
+                hidden
+                    ? "◌"
+                    : "◉";
+        }
+    );
+
+
+    /* =========================================
+       FONT SELECTION
+    ========================================== */
+
+    document
+        .querySelectorAll(".font-preset")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(".font-preset")
+                        .forEach(item =>
+                            item.classList.remove(
+                                "active"
+                            )
+                        );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    fontSelector.value =
+                        button.dataset.font;
+
+                    updateBodyFont();
+                }
+            );
+        });
+
+
+    function updateBodyFont() {
+
+        const option =
+            fontSelector.options[
+                fontSelector.selectedIndex
+            ];
+
+        const key =
+            option
+                ? option.value
+                : "system";
+
+        const fonts = {
+            system:
+                '"Segoe UI", Arial, sans-serif',
+
+            arial:
+                'Arial, Helvetica, sans-serif',
+
+            verdana:
+                'Verdana, Geneva, sans-serif',
+
+            tahoma:
+                'Tahoma, Geneva, sans-serif',
+
+            trebuchet:
+                '"Trebuchet MS", Arial, sans-serif',
+
+            georgia:
+                'Georgia, serif',
+
+            times:
+                '"Times New Roman", Times, serif',
+
+            courier:
+                '"Courier New", monospace',
+
+            lucida:
+                '"Lucida Sans Unicode", Arial, sans-serif',
+
+            palatino:
+                '"Palatino Linotype", Palatino, serif',
+
+            garamond:
+                'Garamond, Georgia, serif',
+
+            impact:
+                'Impact, sans-serif',
+
+            comic:
+                '"Comic Sans MS", cursive',
+
+            segoe:
+                '"Segoe UI", Arial, sans-serif',
+
+            calibri:
+                'Calibri, Arial, sans-serif',
+
+            cambria:
+                'Cambria, Georgia, serif',
+
+            consolas:
+                'Consolas, monospace',
+
+            century:
+                '"Century Gothic", Arial, sans-serif',
+
+            bookman:
+                '"Bookman Old Style", serif',
+
+            franklin:
+                '"Franklin Gothic Medium", Arial, sans-serif'
+        };
+
+        bodyBox.style.fontFamily =
+            fonts[key] || fonts.system;
     }
 
+
+    fontSelector.addEventListener(
+        "change",
+        updateBodyFont
+    );
+
+
+    /* =========================================
+       FANCY FONT STYLIZER
+    ========================================== */
+
+    fancyFontBtn.addEventListener(
+        "click",
+        () => {
+
+            const current =
+                bodyBox.value;
+
+            if (!current.trim()) {
+
+                bodyBox.focus();
+
+                return;
+            }
+
+            /*
+             * Keep the actual email text intact.
+             * This only changes the textarea's visual
+             * font to a more decorative option.
+             */
+
+            const options = [
+                "Georgia",
+                "Trebuchet MS",
+                "Garamond",
+                "Cambria",
+                "Palatino Linotype"
+            ];
+
+            const random =
+                options[
+                    Math.floor(
+                        Math.random() *
+                        options.length
+                    )
+                ];
+
+            bodyBox.style.fontFamily =
+                `"${random}", serif`;
+        }
+    );
+
+
+    /* =========================================
+       RECIPIENT INPUT
+    ========================================== */
 
     recipientsBox.addEventListener(
         "input",
@@ -408,141 +1150,651 @@
     );
 
 
-    bodyBox.addEventListener("input", () => {
-        characterCount.textContent = bodyBox.value.length;
-    });
+    bodyBox.addEventListener(
+        "input",
+        updateMessageStats
+    );
 
 
-    passwordToggle.addEventListener("click", () => {
-        const isPassword =
-            passwordInput.type === "password";
+    /* =========================================
+       SAMPLE EMAILS
+    ========================================== */
 
-        passwordInput.type =
-            isPassword ? "text" : "password";
+    sampleBtn.addEventListener(
+        "click",
+        async () => {
 
-        passwordToggle.textContent =
-            isPassword ? "◌" : "◉";
-    });
+            try {
+
+                const response =
+                    await fetch(
+                        "/sample-emails"
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Sample emails load nahi hue."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                recipientsBox.value =
+                    data.emails.join("\n");
+
+                updateRecipientCount();
+
+                statusText.textContent =
+                    "25 sample emails loaded.";
+
+            } catch (error) {
+
+                statusText.textContent =
+                    error.message;
+            }
+        }
+    );
 
 
-    closeModal.addEventListener("click", () => {
-        modal.classList.remove("show");
-        modal.setAttribute("aria-hidden", "true");
-    });
+    /* =========================================
+       PDF SELECT
+    ========================================== */
+
+    pdfFile.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                pdfFile.files[0];
+
+            if (!file) {
+
+                pdfInfo.textContent =
+                    "No PDF attached";
+
+                previewPdfBtn.disabled =
+                    true;
+
+                removePdfBtn.disabled =
+                    true;
+
+                return;
+            }
 
 
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
+            if (
+                file.type !== "application/pdf" &&
+                !file.name.toLowerCase().endsWith(".pdf")
+            ) {
 
-        if (!form.reportValidity()) {
-            return;
+                alert(
+                    "Please select a PDF file."
+                );
+
+                pdfFile.value = "";
+
+                return;
+            }
+
+
+            if (
+                file.size >
+                10 * 1024 * 1024
+            ) {
+
+                alert(
+                    "PDF maximum 10 MB ho sakti hai."
+                );
+
+                pdfFile.value = "";
+
+                return;
+            }
+
+
+            pdfInfo.textContent =
+                `${file.name} • ${formatFileSize(file.size)}`;
+
+            previewPdfBtn.disabled =
+                false;
+
+            removePdfBtn.disabled =
+                false;
+        }
+    );
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return `${bytes} B`;
         }
 
-        const recipients = getRecipients();
-
-        if (recipients.length === 0) {
-            statusText.textContent =
-                "Please enter at least one recipient.";
-            return;
+        if (bytes < 1024 * 1024) {
+            return `${(
+                bytes / 1024
+            ).toFixed(1)} KB`;
         }
 
-        setSendingState(true);
+        return `${(
+            bytes /
+            (1024 * 1024)
+        ).toFixed(1)} MB`;
+    }
 
-        sentElement.textContent = "0";
-        failedElement.textContent = "0";
-        totalElement.textContent = recipients.length;
-        remainingElement.textContent = recipients.length;
 
-        updateProgress(0, recipients.length);
+    /* =========================================
+       PDF PREVIEW
+    ========================================== */
 
-        statusText.textContent =
-            "Connecting to Gmail server...";
+    previewPdfBtn.addEventListener(
+        "click",
+        () => {
 
-        try {
-            const response = await fetch("/send-stream", {
-                method: "POST",
-                body: new FormData(form)
-            });
+            const file =
+                pdfFile.files[0];
 
-            if (!response.ok || !response.body) {
-                throw new Error(
-                    "Server did not return a valid response."
+            if (!file) {
+                return;
+            }
+
+            if (currentPdfUrl) {
+
+                URL.revokeObjectURL(
+                    currentPdfUrl
                 );
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder("utf-8");
+            currentPdfUrl =
+                URL.createObjectURL(file);
 
-            let buffer = "";
-            let finalResult = null;
+            pdfFrame.src =
+                currentPdfUrl;
 
-            while (true) {
-                const { value, done } = await reader.read();
+            pdfModal.classList.add("show");
 
-                buffer += decoder.decode(
-                    value || new Uint8Array(),
-                    { stream: !done }
+            pdfModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+        }
+    );
+
+
+    removePdfBtn.addEventListener(
+        "click",
+        () => {
+
+            pdfFile.value = "";
+
+            pdfInfo.textContent =
+                "No PDF attached";
+
+            previewPdfBtn.disabled =
+                true;
+
+            removePdfBtn.disabled =
+                true;
+
+            if (currentPdfUrl) {
+
+                URL.revokeObjectURL(
+                    currentPdfUrl
                 );
 
-                const lines = buffer.split("\n");
-                buffer = lines.pop() || "";
+                currentPdfUrl = null;
+            }
+        }
+    );
 
-                for (const line of lines) {
-                    if (!line.trim()) {
-                        continue;
+
+    /* =========================================
+       GUIDE MODAL
+    ========================================== */
+
+    function openGuide() {
+
+        guideModal.classList.add("show");
+
+        guideModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+    }
+
+
+    function closeGuideModal() {
+
+        guideModal.classList.remove("show");
+
+        guideModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+
+    guideBtn.addEventListener(
+        "click",
+        openGuide
+    );
+
+    closeGuide.addEventListener(
+        "click",
+        closeGuideModal
+    );
+
+    closeGuideButton.addEventListener(
+        "click",
+        closeGuideModal
+    );
+
+
+    /* =========================================
+       COMPLETION MODAL
+    ========================================== */
+
+    function showCompletionModal(
+        message
+    ) {
+
+        modalMessage.textContent =
+            message;
+
+        completionModal.classList.add(
+            "show"
+        );
+
+        completionModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+    }
+
+
+    closeModal.addEventListener(
+        "click",
+        () => {
+
+            completionModal.classList.remove(
+                "show"
+            );
+
+            completionModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+        }
+    );
+
+
+    /* =========================================
+       PDF MODAL CLOSE
+    ========================================== */
+
+    closePdf.addEventListener(
+        "click",
+        () => {
+
+            pdfModal.classList.remove(
+                "show"
+            );
+
+            pdfModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+        }
+    );
+
+
+    /* =========================================
+       RESET
+    ========================================== */
+
+    resetBtn.addEventListener(
+        "click",
+        () => {
+
+            form.reset();
+
+            recipientsBox.value = "";
+
+            totalElement.textContent = "0";
+            sentElement.textContent = "0";
+            failedElement.textContent = "0";
+            remainingElement.textContent = "0";
+
+            emailBadge.textContent =
+                "0 Emails";
+
+            progressBar.style.width =
+                "0%";
+
+            statusText.textContent =
+                "Ready to send";
+
+            pdfInfo.textContent =
+                "No PDF attached";
+
+            previewPdfBtn.disabled =
+                true;
+
+            removePdfBtn.disabled =
+                true;
+
+            messageStats.textContent =
+                "0 characters • 1 lines";
+
+            fontSelector.value =
+                "system";
+
+            bodyBox.style.fontFamily =
+                '"Segoe UI", Arial, sans-serif';
+
+            document
+                .querySelectorAll(".font-preset")
+                .forEach(item =>
+                    item.classList.remove(
+                        "active"
+                    )
+                );
+
+            const defaultFont =
+                document.querySelector(
+                    '.font-preset[data-font="system"]'
+                );
+
+            if (defaultFont) {
+                defaultFont.classList.add(
+                    "active"
+                );
+            }
+        }
+    );
+
+
+    /* =========================================
+       SUBMIT / SEND
+    ========================================== */
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            if (!form.reportValidity()) {
+                return;
+            }
+
+
+            const recipients =
+                getRecipients();
+
+
+            if (
+                recipients.length === 0
+            ) {
+
+                statusText.textContent =
+                    "Please enter at least one recipient.";
+
+                return;
+            }
+
+
+            setSendingState(true);
+
+
+            sentElement.textContent =
+                "0";
+
+            failedElement.textContent =
+                "0";
+
+            totalElement.textContent =
+                recipients.length;
+
+            remainingElement.textContent =
+                recipients.length;
+
+
+            updateProgress(
+                0,
+                recipients.length
+            );
+
+
+            statusText.textContent =
+                "Connecting to Gmail server...";
+
+
+            try {
+
+                const formData =
+                    new FormData(form);
+
+
+                const response =
+                    await fetch(
+                        "/send-stream",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                if (
+                    !response.ok ||
+                    !response.body
+                ) {
+
+                    let errorMessage =
+                        "Server did not return a valid response.";
+
+                    try {
+
+                        const data =
+                            await response.json();
+
+                        if (data.error) {
+                            errorMessage =
+                                data.error;
+                        }
+
+                    } catch (_) {}
+
+                    throw new Error(
+                        errorMessage
+                    );
+                }
+
+
+                const reader =
+                    response.body.getReader();
+
+                const decoder =
+                    new TextDecoder("utf-8");
+
+                let buffer = "";
+
+                let finalResult = null;
+
+
+                while (true) {
+
+                    const {
+                        value,
+                        done
+                    } = await reader.read();
+
+
+                    buffer +=
+                        decoder.decode(
+                            value ||
+                            new Uint8Array(),
+                            {
+                                stream: !done
+                            }
+                        );
+
+
+                    const lines =
+                        buffer.split("\n");
+
+                    buffer =
+                        lines.pop() || "";
+
+
+                    for (
+                        const line of lines
+                    ) {
+
+                        if (!line.trim()) {
+                            continue;
+                        }
+
+
+                        const item =
+                            JSON.parse(line);
+
+
+                        updateDashboard(item);
+
+
+                        if (
+                            item.type ===
+                            "fatal"
+                        ) {
+
+                            throw new Error(
+                                item.message
+                            );
+                        }
+
+
+                        if (
+                            item.type ===
+                            "complete"
+                        ) {
+
+                            finalResult =
+                                item;
+                        }
                     }
 
-                    const item = JSON.parse(line);
+
+                    if (done) {
+                        break;
+                    }
+                }
+
+
+                if (buffer.trim()) {
+
+                    const item =
+                        JSON.parse(buffer);
+
                     updateDashboard(item);
 
-                    if (item.type === "fatal") {
-                        throw new Error(item.message);
+
+                    if (
+                        item.type ===
+                        "complete"
+                    ) {
+
+                        finalResult =
+                            item;
                     }
-
-                    if (item.type === "complete") {
-                        finalResult = item;
-                    }
                 }
 
-                if (done) {
-                    break;
-                }
+
+                const sent =
+                    finalResult?.sent ?? 0;
+
+                const failed =
+                    finalResult?.failed ?? 0;
+
+
+                statusText.textContent =
+                    `Completed: ${sent} sent, ${failed} failed`;
+
+
+                showCompletionModal(
+                    `${sent} email(s) sent and ${failed} failed.`
+                );
+
+
+            } catch (error) {
+
+                statusText.textContent =
+                    error.message ||
+                    "Sending failed.";
+
+
+                showCompletionModal(
+                    error.message ||
+                    "Email sending failed."
+                );
+
+
+            } finally {
+
+                setSendingState(
+                    false
+                );
             }
-
-            if (buffer.trim()) {
-                const item = JSON.parse(buffer);
-                updateDashboard(item);
-
-                if (item.type === "complete") {
-                    finalResult = item;
-                }
-            }
-
-            const sent = finalResult?.sent ?? 0;
-            const failed = finalResult?.failed ?? 0;
-
-            statusText.textContent =
-                `Completed: ${sent} sent, ${failed} failed`;
-
-            showCompletionModal(
-                `${sent} email sent and ${failed} failed.`
-            );
-
-        } catch (error) {
-            statusText.textContent =
-                error.message || "Sending failed.";
-
-            showCompletionModal(
-                error.message || "Email sending failed."
-            );
-
-        } finally {
-            setSendingState(false);
         }
+    );
+
+
+    /* =========================================
+       CLOSE MODALS ON BACKDROP
+    ========================================== */
+
+    [
+        guideModal,
+        completionModal,
+        pdfModal
+    ].forEach(modalElement => {
+
+        modalElement.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    modalElement
+                ) {
+
+                    modalElement.classList.remove(
+                        "show"
+                    );
+
+                    modalElement.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+                }
+            }
+        );
     });
 
 
+    /* =========================================
+       INITIAL STATE
+    ========================================== */
+
     updateRecipientCount();
+
+    updateMessageStats();
+
+    updateBodyFont();
+
 </script>
 
 </body>
