@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -22,9 +23,13 @@
 
 <body>
 
+
 <div class="page">
 
-    <!-- ================= HEADER ================= -->
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
 
     <header class="topbar">
 
@@ -60,14 +65,20 @@
     </header>
 
 
-    <!-- ================= MAIN GRID ================= -->
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
 
     <main class="main-grid">
 
 
-        <!-- ================= LEFT ================= -->
+        <!-- =================================================
+             COMPOSE
+        ================================================== -->
 
         <section class="card compose-card">
+
 
             <div class="card-header">
 
@@ -81,30 +92,43 @@
 
                 </div>
 
+
                 <div class="personalization">
+
                     Personalization:
                     <strong>{0}</strong>,
                     <strong>{name}</strong>
+
                 </div>
 
             </div>
 
 
+
             <form id="mailForm">
 
 
-                <!-- SENDER -->
+                <!-- =================================================
+                     SENDER FIELDS
+                ================================================== -->
 
                 <div class="form-grid">
+
+
+                    <!-- SENDER NAME -->
 
                     <div class="field">
 
                         <label>
+
                             Sender Name
+
                             <span class="optional">
                                 (Optional)
                             </span>
+
                         </label>
+
 
                         <input
                             type="text"
@@ -116,14 +140,21 @@
                     </div>
 
 
+
+                    <!-- GMAIL -->
+
                     <div class="field">
 
                         <label>
+
                             Your Gmail
+
                             <span class="required">
                                 *
                             </span>
+
                         </label>
+
 
                         <input
                             type="email"
@@ -136,16 +167,24 @@
                     </div>
 
 
+
+                    <!-- APP PASSWORD -->
+
                     <div class="field">
 
                         <label>
+
                             16-Digit App Password
+
                             <span class="required">
                                 *
                             </span>
+
                         </label>
 
+
                         <div class="password-wrap">
+
 
                             <input
                                 type="password"
@@ -156,6 +195,7 @@
                                 required
                             >
 
+
                             <button
                                 type="button"
                                 id="togglePassword"
@@ -164,19 +204,27 @@
                                 ◉
                             </button>
 
+
                         </div>
 
                     </div>
 
 
+
+                    <!-- SUBJECT -->
+
                     <div class="field">
 
                         <label>
+
                             Email Subject
+
                             <span class="required">
                                 *
                             </span>
+
                         </label>
+
 
                         <input
                             type="text"
@@ -188,21 +236,30 @@
 
                     </div>
 
+
                 </div>
 
 
-                <!-- MESSAGE -->
+
+                <!-- =================================================
+                     MESSAGE BODY
+                ================================================== -->
 
                 <div class="message-section">
+
 
                     <div class="message-top">
 
                         <label>
+
                             Message Body
+
                             <span class="required">
                                 *
                             </span>
+
                         </label>
+
 
                         <span id="counter">
                             0 characters • 0 lines
@@ -211,6 +268,130 @@
                     </div>
 
 
+
+                    <!-- FONT TOOLBAR -->
+
+                    <div class="font-toolbar">
+
+
+                        <span class="font-label">
+                            Message Font
+                        </span>
+
+
+                        <select
+                            id="fontSelect"
+                        >
+
+                            <option value="Inter">
+                                Inter
+                            </option>
+
+                            <option value="Arial">
+                                Arial
+                            </option>
+
+                            <option value="Verdana">
+                                Verdana
+                            </option>
+
+                            <option value="Tahoma">
+                                Tahoma
+                            </option>
+
+                            <option value="Trebuchet MS">
+                                Trebuchet MS
+                            </option>
+
+                            <option value="Georgia">
+                                Georgia
+                            </option>
+
+                            <option value="Times New Roman">
+                                Times New Roman
+                            </option>
+
+                            <option value="Courier New">
+                                Courier New
+                            </option>
+
+                            <option value="Lucida Console">
+                                Lucida Console
+                            </option>
+
+                            <option value="Segoe UI">
+                                Segoe UI
+                            </option>
+
+                            <option value="Calibri">
+                                Calibri
+                            </option>
+
+                            <option value="Cambria">
+                                Cambria
+                            </option>
+
+                            <option value="Garamond">
+                                Garamond
+                            </option>
+
+                            <option value="Palatino Linotype">
+                                Palatino Linotype
+                            </option>
+
+                            <option value="Comic Sans MS">
+                                Comic Sans MS
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- SIZE CONTROLS -->
+
+                        <div class="size-controls">
+
+
+                            <button
+                                type="button"
+                                id="bodySmaller"
+                                title="Make font smaller"
+                            >
+                                −
+                            </button>
+
+
+                            <span id="bodySizeValue">
+                                11px
+                            </span>
+
+
+                            <button
+                                type="button"
+                                id="bodyLarger"
+                                title="Make font larger"
+                            >
+                                +
+                            </button>
+
+
+                            <button
+                                type="button"
+                                id="bodyResetSize"
+                            >
+                                Default
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- BODY -->
+
                     <textarea
                         id="body"
                         name="body"
@@ -218,10 +399,14 @@
                         required
                     ></textarea>
 
+
                 </div>
 
 
-                <!-- SEND BUTTON -->
+
+                <!-- =================================================
+                     SEND BUTTON
+                ================================================== -->
 
                 <button
                     type="submit"
@@ -233,6 +418,7 @@
                         ➤
                     </span>
 
+
                     <span id="sendText">
                         Send Bulk Emails
                     </span>
@@ -242,20 +428,27 @@
 
             </form>
 
+
         </section>
 
 
 
-        <!-- ================= RIGHT ================= -->
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
 
         <aside class="right-column">
 
 
-            <!-- RECIPIENTS -->
+            <!-- =================================================
+                 RECIPIENTS
+            ================================================== -->
 
             <section class="card recipients-card">
 
+
                 <div class="card-header">
+
 
                     <div class="card-title">
 
@@ -267,6 +460,7 @@
 
                     </div>
 
+
                     <span
                         class="count-badge"
                         id="recipientCount"
@@ -274,7 +468,9 @@
                         0 Emails
                     </span>
 
+
                 </div>
+
 
 
                 <textarea
@@ -285,28 +481,37 @@
                 ></textarea>
 
 
+
                 <button
                     type="button"
                     class="sample-btn"
                     id="sampleBtn"
                 >
+
                     ✨ Load 25 Sample Emails
+
                 </button>
+
 
             </section>
 
 
 
-            <!-- PROGRESS -->
+            <!-- =================================================
+                 PROGRESS
+            ================================================== -->
 
             <section class="card progress-card">
+
 
                 <div class="progress-title">
                     Delivery Progress
                 </div>
 
 
+
                 <div class="stats-grid">
+
 
                     <div class="stat-box">
 
@@ -322,6 +527,7 @@
                         </div>
 
                     </div>
+
 
 
                     <div class="stat-box">
@@ -340,17 +546,22 @@
                     </div>
 
 
+
                     <div class="stat-box">
 
                         <div class="stat-label">
                             FAILED
                         </div>
 
-                        <div class="stat-number red" id="failedCount">
+                        <div
+                            class="stat-number red"
+                            id="failedCount"
+                        >
                             0
                         </div>
 
                     </div>
+
 
 
                     <div class="stat-box">
@@ -368,8 +579,12 @@
 
                     </div>
 
+
                 </div>
 
+
+
+                <!-- PROGRESS -->
 
                 <div class="progress-track">
 
@@ -381,12 +596,16 @@
                 </div>
 
 
+
+                <!-- STATUS -->
+
                 <div class="status-box">
 
                     <span
                         class="status-dot"
                         id="statusDot"
                     ></span>
+
 
                     <span id="statusText">
                         Ready to send
@@ -395,6 +614,9 @@
                 </div>
 
 
+
+                <!-- LIVE MESSAGE -->
+
                 <div
                     class="live-message"
                     id="liveMessage"
@@ -402,21 +624,29 @@
                     Your email operation is ready.
                 </div>
 
+
             </section>
 
+
         </aside>
+
 
     </main>
 
 
-    <!-- ================= MODAL ================= -->
+
+    <!-- =================================================
+         RESULT MODAL
+    ================================================== -->
 
     <div
         class="modal"
         id="resultModal"
     >
 
+
         <div class="modal-box">
+
 
             <div
                 class="modal-icon"
@@ -425,32 +655,50 @@
                 ✓
             </div>
 
+
             <h2 id="modalTitle">
                 Sending completed
             </h2>
+
 
             <p id="modalMessage">
                 Your email operation has finished.
             </p>
 
 
+
             <div class="modal-stats">
 
+
                 <div>
+
                     <strong id="modalSent">
                         0
                     </strong>
-                    <span>Sent</span>
+
+                    <span>
+                        Sent
+                    </span>
+
                 </div>
 
+
+
                 <div>
+
                     <strong id="modalFailed">
                         0
                     </strong>
-                    <span>Failed</span>
+
+                    <span>
+                        Failed
+                    </span>
+
                 </div>
 
+
             </div>
+
 
 
             <button
@@ -461,7 +709,9 @@
                 Close
             </button>
 
+
         </div>
+
 
     </div>
 
@@ -469,109 +719,195 @@
 </div>
 
 
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
 <script>
 
-const form = document.getElementById("mailForm");
 
-const senderName = document.getElementById("senderName");
-const senderEmail = document.getElementById("senderEmail");
-const appPassword = document.getElementById("appPassword");
-const subject = document.getElementById("subject");
-const body = document.getElementById("body");
-const recipients = document.getElementById("recipients");
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-const counter = document.getElementById("counter");
+const form =
+    document.getElementById("mailForm");
+
+
+const senderName =
+    document.getElementById("senderName");
+
+
+const senderEmail =
+    document.getElementById("senderEmail");
+
+
+const appPassword =
+    document.getElementById("appPassword");
+
+
+const subject =
+    document.getElementById("subject");
+
+
+const body =
+    document.getElementById("body");
+
+
+const recipients =
+    document.getElementById("recipients");
+
+
+const counter =
+    document.getElementById("counter");
+
 
 const recipientCount =
     document.getElementById("recipientCount");
 
+
 const totalCount =
     document.getElementById("totalCount");
+
 
 const sentCount =
     document.getElementById("sentCount");
 
+
 const failedCount =
     document.getElementById("failedCount");
+
 
 const remainingCount =
     document.getElementById("remainingCount");
 
+
 const progressBar =
     document.getElementById("progressBar");
+
 
 const statusText =
     document.getElementById("statusText");
 
+
 const statusDot =
     document.getElementById("statusDot");
+
 
 const liveMessage =
     document.getElementById("liveMessage");
 
+
 const sendBtn =
     document.getElementById("sendBtn");
+
 
 const sendText =
     document.getElementById("sendText");
 
+
 const sendIcon =
     document.getElementById("sendIcon");
+
 
 const resultModal =
     document.getElementById("resultModal");
 
+
 const modalTitle =
     document.getElementById("modalTitle");
+
 
 const modalMessage =
     document.getElementById("modalMessage");
 
+
 const modalSent =
     document.getElementById("modalSent");
+
 
 const modalFailed =
     document.getElementById("modalFailed");
 
 
+const fontSelect =
+    document.getElementById("fontSelect");
 
-/* ================= PASSWORD ================= */
+
+const bodySmaller =
+    document.getElementById("bodySmaller");
+
+
+const bodyLarger =
+    document.getElementById("bodyLarger");
+
+
+const bodyResetSize =
+    document.getElementById("bodyResetSize");
+
+
+const bodySizeValue =
+    document.getElementById("bodySizeValue");
+
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
 
 document
     .getElementById("togglePassword")
-    .addEventListener("click", function () {
+    .addEventListener(
+        "click",
+        function () {
 
-        if (appPassword.type === "password") {
+            if (
+                appPassword.type ===
+                "password"
+            ) {
 
-            appPassword.type = "text";
+                appPassword.type =
+                    "text";
 
-            this.textContent = "◌";
+                this.textContent =
+                    "◌";
 
-        } else {
+            } else {
 
-            appPassword.type = "password";
+                appPassword.type =
+                    "password";
 
-            this.textContent = "◉";
+                this.textContent =
+                    "◉";
+            }
+
         }
-
-    });
-
+    );
 
 
-/* ================= BODY COUNTER ================= */
+
+/* =========================================================
+   BODY CHARACTER COUNTER
+========================================================= */
 
 function updateBodyCounter() {
 
-    const text = body.value;
+    const text =
+        body.value;
 
-    const characters = text.length;
+    const characters =
+        text.length;
 
-    const lines = text
-        ? text.split(/\r?\n/).length
-        : 0;
+    const lines =
+        text
+            ? text.split(/\r?\n/).length
+            : 0;
+
 
     counter.textContent =
         `${characters} characters • ${lines} lines`;
+
 }
 
 
@@ -582,13 +918,111 @@ body.addEventListener(
 
 
 
-/* ================= RECIPIENT PARSER ================= */
+/* =========================================================
+   FONT SYSTEM
+========================================================= */
+
+let bodyFontSize = 11;
+
+const MIN_BODY_SIZE = 8;
+const MAX_BODY_SIZE = 24;
+const BODY_SIZE_STEP = 1;
+
+
+function updateBodyFont() {
+
+    body.style.fontFamily =
+        `"${fontSelect.value}", sans-serif`;
+
+}
+
+
+function updateBodyFontSize() {
+
+    body.style.fontSize =
+        `${bodyFontSize}px`;
+
+    bodySizeValue.textContent =
+        `${bodyFontSize}px`;
+
+}
+
+
+fontSelect.addEventListener(
+    "change",
+    updateBodyFont
+);
+
+
+bodySmaller.addEventListener(
+    "click",
+    function () {
+
+        if (
+            bodyFontSize >
+            MIN_BODY_SIZE
+        ) {
+
+            bodyFontSize -=
+                BODY_SIZE_STEP;
+
+            updateBodyFontSize();
+
+        }
+
+    }
+);
+
+
+bodyLarger.addEventListener(
+    "click",
+    function () {
+
+        if (
+            bodyFontSize <
+            MAX_BODY_SIZE
+        ) {
+
+            bodyFontSize +=
+                BODY_SIZE_STEP;
+
+            updateBodyFontSize();
+
+        }
+
+    }
+);
+
+
+bodyResetSize.addEventListener(
+    "click",
+    function () {
+
+        bodyFontSize = 11;
+
+        updateBodyFontSize();
+
+    }
+);
+
+
+updateBodyFont();
+updateBodyFontSize();
+
+
+
+/* =========================================================
+   RECIPIENT PARSER
+========================================================= */
 
 function getRecipients() {
 
     return recipients.value
         .split(/[\s,;]+/)
-        .map(email => email.trim())
+        .map(
+            email =>
+                email.trim()
+        )
         .filter(Boolean);
 
 }
@@ -596,21 +1030,27 @@ function getRecipients() {
 
 function updateRecipientCount() {
 
-    const list = getRecipients();
+    const list =
+        getRecipients();
+
 
     const unique = [
         ...new Set(
             list.map(
-                email => email.toLowerCase()
+                email =>
+                    email.toLowerCase()
             )
         )
     ];
 
+
     recipientCount.textContent =
         `${unique.length} Emails`;
 
+
     totalCount.textContent =
         unique.length;
+
 
     remainingCount.textContent =
         unique.length;
@@ -625,122 +1065,202 @@ recipients.addEventListener(
 
 
 
-/* ================= SAMPLE EMAILS ================= */
+/* =========================================================
+   SAMPLE EMAILS
+========================================================= */
 
 document
     .getElementById("sampleBtn")
-    .addEventListener("click", function () {
+    .addEventListener(
+        "click",
+        function () {
 
-        const samples = [];
+            const samples = [];
 
-        for (let i = 1; i <= 25; i++) {
 
-            samples.push(
-                `recipient${i}@example.com`
-            );
+            for (
+                let i = 1;
+                i <= 25;
+                i++
+            ) {
+
+                samples.push(
+                    `recipient${i}@example.com`
+                );
+
+            }
+
+
+            recipients.value =
+                samples.join("\n");
+
+
+            updateRecipientCount();
 
         }
-
-        recipients.value =
-            samples.join("\n");
-
-        updateRecipientCount();
-
-    });
+    );
 
 
 
-/* ================= RESET ================= */
+/* =========================================================
+   RESET
+========================================================= */
 
 document
     .getElementById("resetBtn")
-    .addEventListener("click", function () {
+    .addEventListener(
+        "click",
+        function () {
 
-        form.reset();
+            form.reset();
 
-        recipients.value = "";
-
-        updateBodyCounter();
-        updateRecipientCount();
-
-        sentCount.textContent = "0";
-        failedCount.textContent = "0";
-        remainingCount.textContent = "0";
-        totalCount.textContent = "0";
-
-        progressBar.style.width = "0%";
-
-        statusText.textContent =
-            "Ready to send";
-
-        liveMessage.textContent =
-            "Your email operation is ready.";
-
-        statusDot.className =
-            "status-dot";
-
-        sendBtn.disabled = false;
-
-        sendText.textContent =
-            "Send Bulk Emails";
-
-        sendIcon.textContent =
-            "➤";
-
-    });
+            recipients.value = "";
 
 
+            bodyFontSize = 11;
 
-/* ================= UPDATE PROGRESS ================= */
+
+            updateBodyCounter();
+            updateRecipientCount();
+
+            updateBodyFont();
+            updateBodyFontSize();
+
+
+            sentCount.textContent =
+                "0";
+
+            failedCount.textContent =
+                "0";
+
+            remainingCount.textContent =
+                "0";
+
+            totalCount.textContent =
+                "0";
+
+
+            progressBar.style.width =
+                "0%";
+
+
+            statusText.textContent =
+                "Ready to send";
+
+
+            liveMessage.textContent =
+                "Your email operation is ready.";
+
+
+            statusDot.className =
+                "status-dot";
+
+
+            sendBtn.disabled =
+                false;
+
+
+            sendText.textContent =
+                "Send Bulk Emails";
+
+
+            sendIcon.textContent =
+                "➤";
+
+        }
+    );
+
+
+
+/* =========================================================
+   PROGRESS UPDATE
+========================================================= */
 
 function updateProgress(data) {
 
-    if (typeof data.total !== "undefined") {
+
+    if (
+        typeof data.total !==
+        "undefined"
+    ) {
+
         totalCount.textContent =
             data.total;
+
     }
 
-    if (typeof data.sent !== "undefined") {
+
+    if (
+        typeof data.sent !==
+        "undefined"
+    ) {
+
         sentCount.textContent =
             data.sent;
+
     }
 
-    if (typeof data.failed !== "undefined") {
+
+    if (
+        typeof data.failed !==
+        "undefined"
+    ) {
+
         failedCount.textContent =
             data.failed;
+
     }
 
-    if (typeof data.remaining !== "undefined") {
+
+    if (
+        typeof data.remaining !==
+        "undefined"
+    ) {
+
         remainingCount.textContent =
             data.remaining;
+
     }
 
-    if (data.total > 0) {
+
+    if (
+        data.total > 0
+    ) {
 
         const completed =
             (data.sent || 0) +
             (data.failed || 0);
 
+
         const percentage =
             Math.round(
-                (completed / data.total) * 100
+                (
+                    completed /
+                    data.total
+                ) * 100
             );
+
 
         progressBar.style.width =
             `${percentage}%`;
+
     }
+
 
     if (data.message) {
 
         liveMessage.textContent =
             data.message;
+
     }
 
 }
 
 
 
-/* ================= SEND ================= */
+/* =========================================================
+   SEND FORM
+========================================================= */
 
 form.addEventListener(
     "submit",
@@ -753,17 +1273,26 @@ form.addEventListener(
             getRecipients();
 
 
-        if (emailList.length === 0) {
+        /* -----------------------------------------------
+           VALIDATION
+        ------------------------------------------------ */
+
+        if (
+            emailList.length === 0
+        ) {
 
             alert(
                 "Kam se kam ek recipient enter karein."
             );
 
             return;
+
         }
 
 
-        if (!senderEmail.value.trim()) {
+        if (
+            !senderEmail.value.trim()
+        ) {
 
             alert(
                 "Gmail address enter karein."
@@ -772,10 +1301,13 @@ form.addEventListener(
             senderEmail.focus();
 
             return;
+
         }
 
 
-        if (!appPassword.value.trim()) {
+        if (
+            !appPassword.value.trim()
+        ) {
 
             alert(
                 "16-digit App Password enter karein."
@@ -784,10 +1316,13 @@ form.addEventListener(
             appPassword.focus();
 
             return;
+
         }
 
 
-        if (!subject.value.trim()) {
+        if (
+            !subject.value.trim()
+        ) {
 
             alert(
                 "Email subject enter karein."
@@ -796,10 +1331,13 @@ form.addEventListener(
             subject.focus();
 
             return;
+
         }
 
 
-        if (!body.value.trim()) {
+        if (
+            !body.value.trim()
+        ) {
 
             alert(
                 "Message body enter karein."
@@ -808,25 +1346,41 @@ form.addEventListener(
             body.focus();
 
             return;
+
         }
 
 
-        sendBtn.disabled = true;
+        /* -----------------------------------------------
+           UI
+        ------------------------------------------------ */
 
-        sendIcon.textContent = "●";
+        sendBtn.disabled =
+            true;
+
+
+        sendIcon.textContent =
+            "●";
+
 
         sendText.textContent =
             "Sending...";
 
 
-        sentCount.textContent = "0";
-        failedCount.textContent = "0";
+        sentCount.textContent =
+            "0";
+
+
+        failedCount.textContent =
+            "0";
+
 
         totalCount.textContent =
             emailList.length;
 
+
         remainingCount.textContent =
             emailList.length;
+
 
         progressBar.style.width =
             "0%";
@@ -835,12 +1389,18 @@ form.addEventListener(
         statusDot.className =
             "status-dot active";
 
+
         statusText.textContent =
             "Sending emails...";
+
 
         liveMessage.textContent =
             "Gmail server se connect ho raha hai...";
 
+
+        /* -----------------------------------------------
+           FORM DATA
+        ------------------------------------------------ */
 
         const formData =
             new FormData(form);
@@ -851,6 +1411,10 @@ form.addEventListener(
             emailList.join("\n")
         );
 
+
+        /* -----------------------------------------------
+           REQUEST
+        ------------------------------------------------ */
 
         try {
 
@@ -869,24 +1433,34 @@ form.addEventListener(
                 throw new Error(
                     "Server request failed."
                 );
+
             }
 
 
             const reader =
                 response.body.getReader();
 
+
             const decoder =
-                new TextDecoder("utf-8");
+                new TextDecoder(
+                    "utf-8"
+                );
+
 
             let buffer = "";
 
+
+            /* -------------------------------------------
+               READ STREAM
+            -------------------------------------------- */
 
             while (true) {
 
                 const {
                     value,
                     done
-                } = await reader.read();
+                } =
+                    await reader.read();
 
 
                 if (done) {
@@ -912,11 +1486,17 @@ form.addEventListener(
 
 
                 for (
-                    const line of lines
+                    const line
+                    of lines
                 ) {
 
-                    if (!line.trim()) {
+
+                    if (
+                        !line.trim()
+                    ) {
+
                         continue;
+
                     }
 
 
@@ -926,8 +1506,14 @@ form.addEventListener(
                             JSON.parse(line);
 
 
-                        updateProgress(data);
+                        updateProgress(
+                            data
+                        );
 
+
+                        /* -----------------------------
+                           CONNECTED
+                        ----------------------------- */
 
                         if (
                             data.type ===
@@ -940,6 +1526,10 @@ form.addEventListener(
                         }
 
 
+                        /* -----------------------------
+                           BATCH
+                        ----------------------------- */
+
                         if (
                             data.type ===
                             "batch"
@@ -950,6 +1540,10 @@ form.addEventListener(
 
                         }
 
+
+                        /* -----------------------------
+                           PROGRESS
+                        ----------------------------- */
 
                         if (
                             data.type ===
@@ -964,16 +1558,24 @@ form.addEventListener(
                         }
 
 
+                        /* -----------------------------
+                           WAITING
+                        ----------------------------- */
+
                         if (
                             data.type ===
                             "waiting"
                         ) {
 
                             statusText.textContent =
-                                "Waiting for next batch...";
+                                "Next batch...";
 
                         }
 
+
+                        /* -----------------------------
+                           FATAL
+                        ----------------------------- */
 
                         if (
                             data.type ===
@@ -983,23 +1585,33 @@ form.addEventListener(
                             statusDot.className =
                                 "status-dot error";
 
+
                             statusText.textContent =
                                 "Sending failed";
+
 
                             sendBtn.disabled =
                                 false;
 
+
                             sendIcon.textContent =
                                 "➤";
+
 
                             sendText.textContent =
                                 "Send Bulk Emails";
 
+
                             alert(
                                 data.message
                             );
+
                         }
 
+
+                        /* -----------------------------
+                           COMPLETE
+                        ----------------------------- */
 
                         if (
                             data.type ===
@@ -1009,14 +1621,18 @@ form.addEventListener(
                             statusDot.className =
                                 "status-dot success";
 
+
                             statusText.textContent =
                                 "Sending completed";
+
 
                             sendBtn.disabled =
                                 false;
 
+
                             sendIcon.textContent =
                                 "✓";
+
 
                             sendText.textContent =
                                 "Send Bulk Emails";
@@ -1025,20 +1641,25 @@ form.addEventListener(
                             modalSent.textContent =
                                 data.sent;
 
+
                             modalFailed.textContent =
                                 data.failed;
+
 
                             modalTitle.textContent =
                                 "Sending completed";
 
+
                             modalMessage.textContent =
                                 `Processed ${data.total} recipients.`;
+
 
                             resultModal.classList.add(
                                 "show"
                             );
 
                         }
+
 
                     } catch (error) {
 
@@ -1053,24 +1674,33 @@ form.addEventListener(
 
             }
 
+
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             statusDot.className =
                 "status-dot error";
 
+
             statusText.textContent =
                 "Connection error";
+
 
             liveMessage.textContent =
                 error.message;
 
+
             sendBtn.disabled =
                 false;
 
+
             sendIcon.textContent =
                 "➤";
+
 
             sendText.textContent =
                 "Send Bulk Emails";
@@ -1082,7 +1712,9 @@ form.addEventListener(
 
 
 
-/* ================= MODAL ================= */
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
 
 document
     .getElementById("closeModal")
@@ -1117,12 +1749,22 @@ resultModal.addEventListener(
 );
 
 
-/* INITIAL */
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
 updateBodyCounter();
+
 updateRecipientCount();
+
+updateBodyFont();
+
+updateBodyFontSize();
 
 </script>
 
+
 </body>
+
 </html>
