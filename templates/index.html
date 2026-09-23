@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,38 +16,43 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
+
 </head>
+
 
 <body>
 
-<main class="app-shell">
+<div class="app">
 
-    <!-- =========================================
-         HEADER
-    ========================================== -->
+    <!-- ================= HEADER ================= -->
 
-    <header class="top-header">
+    <header class="topbar">
 
-        <div class="brand-area">
+        <div class="brand">
 
             <div class="brand-icon">
                 ✉
             </div>
 
             <div>
-                <h1>Bulk Mail Sender</h1>
 
-                <p>
+                <div class="brand-title">
+                    Bulk Mail Sender
+                </div>
+
+                <div class="brand-subtitle">
                     Fast 16-Digit App Password Email Dispatcher
-                </p>
+                </div>
+
             </div>
 
         </div>
 
+
         <button
             type="button"
+            class="reset-btn"
             id="resetBtn"
-            class="reset-button"
         >
             ↻ &nbsp; Reset Fields
         </button>
@@ -54,343 +60,385 @@
     </header>
 
 
-    <!-- =========================================
-         MAIN GRID
-    ========================================== -->
+    <!-- ================= MAIN GRID ================= -->
 
-    <div class="main-grid">
+    <main class="dashboard">
 
-        <!-- =====================================
-             LEFT SIDE
-        ====================================== -->
 
-        <section class="card compose-card">
+        <!-- ================= LEFT COLUMN ================= -->
 
-            <div class="card-heading">
+        <section class="left-column">
 
-                <div class="heading-left">
-                    <span class="heading-symbol">♧</span>
-                    <h2>Compose Message</h2>
-                </div>
 
-                <div class="personalization">
-                    Personalization:
-                    <strong>{0}, {name}</strong>
-                </div>
+            <!-- COMPOSE CARD -->
 
-            </div>
-
-
-            <form
-                id="mailForm"
-                enctype="multipart/form-data"
-            >
-
-                <!-- =================================
-                     SENDER / GMAIL
-                ================================== -->
-
-                <div class="form-grid">
-
-                    <div class="field">
-
-                        <label for="sender_name">
-                            Sender Name
-                            <span class="optional">
-                                (Optional)
-                            </span>
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sender_name"
-                            name="sender_name"
-                            placeholder="e.g. John Doe / Company"
-                            autocomplete="name"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="sender_email">
-                            Your Gmail
-                            <span class="required">*</span>
-                        </label>
-
-                        <input
-                            type="email"
-                            id="sender_email"
-                            name="sender_email"
-                            placeholder="you@gmail.com"
-                            autocomplete="email"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="app_password">
-
-                            16-Digit App Password
-                            <span class="required">*</span>
-
-                            <button
-                                type="button"
-                                id="guideBtn"
-                                class="guide-button"
-                            >
-                                ? Guide
-                            </button>
-
-                        </label>
-
-                        <div class="password-wrapper">
-
-                            <input
-                                type="password"
-                                id="app_password"
-                                name="app_password"
-                                placeholder="xxxx xxxx xxxx xxxx"
-                                autocomplete="new-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                id="passwordToggle"
-                                class="eye-button"
-                                aria-label="Show password"
-                            >
-                                ◉
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="subject">
-                            Email Subject
-                            <span class="required">*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            id="subject"
-                            name="subject"
-                            placeholder="Subject of the email..."
-                            maxlength="180"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================
-                     MESSAGE BODY
-                ================================== -->
-
-                <div class="message-section">
-
-                    <div class="message-heading">
-
-                        <label for="body">
-                            Message Body
-                            <span class="required">*</span>
-                        </label>
-
-                        <span id="messageStats">
-                            0 characters • 1 lines
-                        </span>
-
-                    </div>
-
-
-                    <!-- FONT BAR -->
-
-                    <div class="font-toolbar">
-
-                        <div class="font-title">
-                            T
-                            <span>
-                                Message Body Font Design:
-                            </span>
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="font-preset active"
-                            data-font="system"
-                        >
-                            Default Clean (System Sans)
-                        </button>
-
-
-                        <button
-                            type="button"
-                            id="fancyFontBtn"
-                            class="fancy-button"
-                        >
-                            ✣ Fancy Font Stylizer
-                        </button>
-
-
-                        <select
-                            id="fontSelector"
-                            name="font_key"
-                        >
-
-                            {% for key, font in fonts.items() %}
-
-                            <option
-                                value="{{ key }}"
-                                {% if key == "system" %}
-                                selected
-                                {% endif %}
-                            >
-                                {{ key|capitalize }}
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-
-                    <textarea
-                        id="body"
-                        name="body"
-                        rows="10"
-                        placeholder="Write your email body here... Select any of the 20 font designs above or click Fancy Font Stylizer!"
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <!-- =================================
-                     PDF ATTACHMENT
-                ================================== -->
-
-                <section class="attachment-card">
-
-                    <div class="attachment-info">
-
-                        <div class="attachment-icon">
-                            ▣
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                MESSAGE BODY PDF ATTACHMENT
-                            </strong>
-
-                            <p>
-                                Message body mein PDF attach karne ke
-                                liye file select karein.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="attachment-actions">
-
-                        <label
-                            for="pdfFile"
-                            class="pdf-select-button"
-                        >
-                            Choose PDF
-                        </label>
-
-                        <input
-                            type="file"
-                            id="pdfFile"
-                            name="pdf_file"
-                            accept=".pdf,application/pdf"
-                            hidden
-                        >
-
-                        <button
-                            type="button"
-                            id="previewPdfBtn"
-                            class="preview-button"
-                            disabled
-                        >
-                            ↗ Preview PDF
-                        </button>
-
-                        <button
-                            type="button"
-                            id="removePdfBtn"
-                            class="remove-pdf-button"
-                            disabled
-                        >
-                            Remove
-                        </button>
-
-                    </div>
-
-
-                    <div
-                        id="pdfInfo"
-                        class="pdf-info"
-                    >
-                        No PDF attached
-                    </div>
-
-                </section>
-
-            </form>
-
-        </section>
-
-
-        <!-- =====================================
-             RIGHT SIDE
-        ====================================== -->
-
-        <aside class="right-column">
-
-
-            <!-- =================================
-                 RECIPIENTS
-            ================================== -->
-
-            <section class="card recipients-card">
+            <div class="card compose-card">
 
                 <div class="card-heading">
 
                     <div class="heading-left">
 
-                        <span class="heading-symbol">
-                            ♧
+                        <span class="heading-icon">
+                            ✎
                         </span>
 
-                        <h2>
-                            Recipients List
-                        </h2>
+                        <span>
+                            Compose Message
+                        </span>
 
                     </div>
 
-                    <span
-                        id="emailBadge"
-                        class="email-badge"
+                    <div class="personalization">
+                        Personalization:
+                        <b>{0}</b>,
+                        <b>{name}</b>
+                    </div>
+
+                </div>
+
+
+                <form id="mailForm">
+
+
+                    <!-- ROW 1 -->
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label>
+                                Sender Name
+                                <span class="optional">
+                                    (Optional)
+                                </span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="sender_name"
+                                name="sender_name"
+                                placeholder="e.g. John Doe / Company"
+                            >
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Your Gmail
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="sender_email"
+                                name="sender_email"
+                                placeholder="you@gmail.com"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ROW 2 -->
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label>
+                                16-Digit App Password
+                                <span class="required">*</span>
+
+                                <button
+                                    type="button"
+                                    class="guide-btn"
+                                    id="guideBtn"
+                                >
+                                    ? Guide
+                                </button>
+
+                            </label>
+
+                            <div class="password-wrap">
+
+                                <input
+                                    type="password"
+                                    id="app_password"
+                                    name="app_password"
+                                    maxlength="19"
+                                    placeholder="xxxx xxxx xxxx xxxx"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="eye-btn"
+                                    id="togglePassword"
+                                >
+                                    ◉
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Email Subject
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                placeholder="Subject of the email..."
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE BODY -->
+
+                    <div class="field message-field">
+
+                        <div class="label-row">
+
+                            <label>
+                                Message Body
+                                <span class="required">*</span>
+                            </label>
+
+                            <span
+                                id="characterCount"
+                                class="counter"
+                            >
+                                0 characters • 1 line
+                            </span>
+
+                        </div>
+
+
+                        <div class="font-toolbar">
+
+                            <span class="font-title">
+                                T
+                            </span>
+
+                            <strong>
+                                Message Body Font Design:
+                            </strong>
+
+                            <button
+                                type="button"
+                                class="font-chip active"
+                                data-font="system"
+                            >
+                                Default Clean
+                            </button>
+
+                            <button
+                                type="button"
+                                class="font-chip fancy"
+                                data-font="fancy"
+                            >
+                                ✨ Fancy Font Stylizer
+                            </button>
+
+                            <select
+                                id="fontSelect"
+                                class="font-select"
+                            >
+
+                                <option value="">
+                                    Browse 20 Fonts
+                                </option>
+
+                                <option value="Arial">
+                                    Arial
+                                </option>
+
+                                <option value="Georgia">
+                                    Georgia
+                                </option>
+
+                                <option value="Verdana">
+                                    Verdana
+                                </option>
+
+                                <option value="Tahoma">
+                                    Tahoma
+                                </option>
+
+                                <option value="Trebuchet MS">
+                                    Trebuchet MS
+                                </option>
+
+                                <option value="Courier New">
+                                    Courier New
+                                </option>
+
+                                <option value="Times New Roman">
+                                    Times New Roman
+                                </option>
+
+                                <option value="Lucida Sans">
+                                    Lucida Sans
+                                </option>
+
+                                <option value="Segoe UI">
+                                    Segoe UI
+                                </option>
+
+                                <option value="Calibri">
+                                    Calibri
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <textarea
+                            id="body"
+                            name="body"
+                            placeholder="Write your email body here..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- INFORMATION PANEL -->
+
+                    <div class="info-panel">
+
+                        <div class="info-top">
+
+                            <div class="info-symbol">
+                                ✓
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-title">
+                                    STANDARD EMAIL SENDING
+                                </div>
+
+                                <div class="info-text">
+                                    Your message will be sent through
+                                    Gmail SMTP using your App Password.
+                                </div>
+
+                            </div>
+
+                            <div class="status-switch">
+                                <span>
+                                    Active
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="protected-title">
+                            Message options
+                        </div>
+
+
+                        <div class="tag-row">
+
+                            <span class="tag">
+                                Google
+                            </span>
+
+                            <span class="tag">
+                                rank / ranking
+                            </span>
+
+                            <span class="tag">
+                                1st page
+                            </span>
+
+                            <span class="tag">
+                                quote / quotation
+                            </span>
+
+                            <span class="tag">
+                                reports / report
+                            </span>
+
+                            <span class="tag">
+                                info / information
+                            </span>
+
+                            <span class="tag">
+                                Error / Glitch
+                            </span>
+
+                            <span class="tag">
+                                screenshot / snapshot
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-note">
+                            Emails are sent using standard SMTP.
+                            Delivery to the recipient's inbox depends
+                            on Gmail and the receiving mail server.
+                        </div>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= RIGHT COLUMN ================= -->
+
+        <section class="right-column">
+
+
+            <!-- RECIPIENTS -->
+
+            <div class="card recipients-card">
+
+                <div class="card-heading">
+
+                    <div class="heading-left">
+
+                        <span class="heading-icon">
+                            ♙
+                        </span>
+
+                        <span>
+                            Recipients List
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="count-badge"
+                        id="recipientBadge"
                     >
                         0 Emails
-                    </span>
+                    </div>
 
                 </div>
 
@@ -398,31 +446,27 @@
                 <textarea
                     id="recipients"
                     name="recipients"
-                    form="mailForm"
-                    rows="5"
+                    class="recipients-input"
                     placeholder="Paste client emails (one per line or comma separated)..."
-                    required
                 ></textarea>
 
 
                 <button
                     type="button"
+                    class="sample-btn"
                     id="sampleBtn"
-                    class="sample-button"
                 >
-                    ✣ Load 25 Sample Emails
+                    ✣ &nbsp; Load 25 Sample Emails
                 </button>
 
-            </section>
+            </div>
 
 
-            <!-- =================================
-                 PROGRESS
-            ================================== -->
+            <!-- DELIVERY -->
 
-            <section class="card progress-card">
+            <div class="card delivery-card">
 
-                <div class="progress-title">
+                <div class="delivery-title">
                     Delivery Progress
                 </div>
 
@@ -431,64 +475,64 @@
 
                     <div class="stat-box">
 
-                        <span>
+                        <div class="stat-label">
                             TOTAL
-                        </span>
+                        </div>
 
-                        <strong
-                            id="total"
-                            class="total-value"
+                        <div
+                            class="stat-number blue"
+                            id="totalCount"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
 
                     <div class="stat-box">
 
-                        <span>
+                        <div class="stat-label">
                             SENT
-                        </span>
+                        </div>
 
-                        <strong
-                            id="sent"
-                            class="sent-value"
+                        <div
+                            class="stat-number green"
+                            id="sentCount"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
 
                     <div class="stat-box">
 
-                        <span>
+                        <div class="stat-label">
                             FAILED
-                        </span>
+                        </div>
 
-                        <strong
-                            id="failed"
-                            class="failed-value"
+                        <div
+                            class="stat-number red"
+                            id="failedCount"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
 
                     <div class="stat-box">
 
-                        <span>
+                        <div class="stat-label">
                             REMAINING
-                        </span>
+                        </div>
 
-                        <strong
-                            id="remaining"
-                            class="remaining-value"
+                        <div
+                            class="stat-number orange"
+                            id="remainingCount"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
@@ -498,8 +542,8 @@
                 <div class="progress-track">
 
                     <div
-                        id="progressBar"
                         class="progress-bar"
+                        id="progressBar"
                     ></div>
 
                 </div>
@@ -507,159 +551,148 @@
 
                 <div class="delivery-status">
 
-                    <span class="status-dot"></span>
+                    <div>
 
-                    <span id="statusText">
-                        Ready to send
-                    </span>
+                        <span class="status-dot green-dot"></span>
+
+                        <span id="statusText">
+                            Ready to send
+                        </span>
+
+                    </div>
+
+                    <div id="lastResult">
+                        Gmail SMTP
+                    </div>
 
                 </div>
 
 
                 <button
-                    type="submit"
-                    form="mailForm"
+                    type="button"
                     id="sendBtn"
-                    class="send-button"
+                    class="send-btn"
+                    disabled
                 >
-                    <span>➤</span>
-                    <span id="sendButtonText">
-                        Send Bulk Emails
+                    <span>
+                        ➤
                     </span>
+                    Send Bulk Emails
                 </button>
 
-            </section>
 
-        </aside>
+                <div
+                    id="liveLog"
+                    class="live-log"
+                ></div>
 
-    </div>
-
-</main>
+            </div>
 
 
-<!-- =========================================
-     GUIDE MODAL
-========================================== -->
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ================= GUIDE MODAL ================= -->
 
 <div
-    id="guideModal"
     class="modal"
-    aria-hidden="true"
+    id="guideModal"
 >
 
-    <div class="modal-card">
+    <div class="modal-box">
 
         <button
-            type="button"
             class="modal-close"
             id="closeGuide"
         >
             ×
         </button>
 
-        <h3>
+        <h2>
             Gmail App Password
-        </h3>
+        </h2>
 
         <p>
-            Gmail SMTP ke liye normal Gmail password ki jagah
-            Google ka 16-character App Password use karein.
+            Gmail SMTP login ke liye normal Gmail password ke
+            bajay Google App Password use karein.
         </p>
 
         <ol>
 
             <li>
-                Google Account mein 2-Step Verification enable karein.
+                Google Account me 2-Step Verification enable karein.
             </li>
 
             <li>
-                App Password create karein.
+                App Passwords section open karein.
             </li>
 
             <li>
-                Yahan generated 16-character password enter karein.
+                16-character App Password generate karein.
+            </li>
+
+            <li>
+                Yahan generated App Password enter karein.
             </li>
 
         </ol>
 
-        <button
-            type="button"
-            class="modal-button"
-            id="closeGuideButton"
-        >
-            Close
-        </button>
+        <p class="modal-note">
+            Agar Gmail authentication fail ho, to App Password
+            aur Gmail account check karein.
+        </p>
 
     </div>
 
 </div>
 
 
-<!-- =========================================
-     COMPLETION MODAL
-========================================== -->
+<!-- ================= COMPLETE MODAL ================= -->
 
 <div
-    id="completionModal"
     class="modal"
-    aria-hidden="true"
+    id="completeModal"
 >
 
-    <div class="modal-card completion-card">
+    <div class="modal-box complete-box">
 
         <div class="success-icon">
             ✓
         </div>
 
-        <h3>
+        <h2>
             Sending completed
-        </h3>
+        </h2>
 
-        <p id="modalMessage">
-            Email operation has finished.
+        <p id="completeMessage">
+            Your email operation has finished.
         </p>
+
+        <div class="complete-stats">
+
+            <div>
+                <b id="modalSent">0</b>
+                <span>Sent</span>
+            </div>
+
+            <div>
+                <b id="modalFailed">0</b>
+                <span>Failed</span>
+            </div>
+
+        </div>
 
         <button
             type="button"
-            class="modal-button"
-            id="closeModal"
+            id="closeComplete"
+            class="modal-action"
         >
             Close
         </button>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================
-     PDF PREVIEW MODAL
-========================================== -->
-
-<div
-    id="pdfModal"
-    class="modal"
-    aria-hidden="true"
->
-
-    <div class="pdf-modal-card">
-
-        <button
-            type="button"
-            class="modal-close"
-            id="closePdf"
-        >
-            ×
-        </button>
-
-        <h3>
-            PDF Preview
-        </h3>
-
-        <iframe
-            id="pdfFrame"
-            title="PDF Preview"
-        ></iframe>
 
     </div>
 
@@ -668,1134 +701,949 @@
 
 <script>
 
-    /* =========================================
-       ELEMENTS
-    ========================================== */
+const mailForm =
+    document.getElementById("mailForm");
 
-    const form =
-        document.getElementById("mailForm");
+const senderName =
+    document.getElementById("sender_name");
 
-    const senderName =
-        document.getElementById("sender_name");
+const senderEmail =
+    document.getElementById("sender_email");
 
-    const senderEmail =
-        document.getElementById("sender_email");
+const appPassword =
+    document.getElementById("app_password");
 
-    const appPassword =
-        document.getElementById("app_password");
+const subject =
+    document.getElementById("subject");
 
-    const subject =
-        document.getElementById("subject");
+const body =
+    document.getElementById("body");
 
-    const bodyBox =
-        document.getElementById("body");
+const recipients =
+    document.getElementById("recipients");
 
-    const recipientsBox =
-        document.getElementById("recipients");
+const sendBtn =
+    document.getElementById("sendBtn");
 
-    const sendButton =
-        document.getElementById("sendBtn");
+const resetBtn =
+    document.getElementById("resetBtn");
 
-    const sendButtonText =
-        document.getElementById("sendButtonText");
+const sampleBtn =
+    document.getElementById("sampleBtn");
 
-    const totalElement =
-        document.getElementById("total");
+const togglePassword =
+    document.getElementById("togglePassword");
 
-    const sentElement =
-        document.getElementById("sent");
+const guideBtn =
+    document.getElementById("guideBtn");
 
-    const failedElement =
-        document.getElementById("failed");
+const guideModal =
+    document.getElementById("guideModal");
 
-    const remainingElement =
-        document.getElementById("remaining");
+const closeGuide =
+    document.getElementById("closeGuide");
 
-    const progressBar =
-        document.getElementById("progressBar");
+const completeModal =
+    document.getElementById("completeModal");
 
-    const statusText =
-        document.getElementById("statusText");
+const closeComplete =
+    document.getElementById("closeComplete");
 
-    const emailBadge =
-        document.getElementById("emailBadge");
+const characterCount =
+    document.getElementById("characterCount");
 
-    const messageStats =
-        document.getElementById("messageStats");
+const recipientBadge =
+    document.getElementById("recipientBadge");
 
-    const passwordToggle =
-        document.getElementById("passwordToggle");
+const totalCount =
+    document.getElementById("totalCount");
 
-    const resetBtn =
-        document.getElementById("resetBtn");
+const sentCount =
+    document.getElementById("sentCount");
 
-    const sampleBtn =
-        document.getElementById("sampleBtn");
+const failedCount =
+    document.getElementById("failedCount");
 
-    const fontSelector =
-        document.getElementById("fontSelector");
+const remainingCount =
+    document.getElementById("remainingCount");
 
-    const fancyFontBtn =
-        document.getElementById("fancyFontBtn");
+const progressBar =
+    document.getElementById("progressBar");
 
-    const pdfFile =
-        document.getElementById("pdfFile");
+const statusText =
+    document.getElementById("statusText");
 
-    const pdfInfo =
-        document.getElementById("pdfInfo");
+const lastResult =
+    document.getElementById("lastResult");
 
-    const previewPdfBtn =
-        document.getElementById("previewPdfBtn");
+const liveLog =
+    document.getElementById("liveLog");
 
-    const removePdfBtn =
-        document.getElementById("removePdfBtn");
+const modalSent =
+    document.getElementById("modalSent");
 
-    const guideBtn =
-        document.getElementById("guideBtn");
+const modalFailed =
+    document.getElementById("modalFailed");
 
-    const guideModal =
-        document.getElementById("guideModal");
+const completeMessage =
+    document.getElementById("completeMessage");
 
-    const closeGuide =
-        document.getElementById("closeGuide");
-
-    const closeGuideButton =
-        document.getElementById("closeGuideButton");
-
-    const completionModal =
-        document.getElementById("completionModal");
-
-    const modalMessage =
-        document.getElementById("modalMessage");
-
-    const closeModal =
-        document.getElementById("closeModal");
-
-    const pdfModal =
-        document.getElementById("pdfModal");
-
-    const pdfFrame =
-        document.getElementById("pdfFrame");
-
-    const closePdf =
-        document.getElementById("closePdf");
+const fontSelect =
+    document.getElementById("fontSelect");
 
 
-    let currentPdfUrl = null;
+/* ==========================================
+   RECIPIENT PARSER
+========================================== */
+
+function getRecipients() {
+
+    const value =
+        recipients.value || "";
+
+    return value
+        .split(/[\s,;]+/)
+        .map(item => item.trim().toLowerCase())
+        .filter(Boolean)
+        .filter(
+            (item, index, arr) =>
+                arr.indexOf(item) === index
+        );
+}
 
 
-    /* =========================================
-       RECIPIENT PARSER
-    ========================================== */
+/* ==========================================
+   UPDATE RECIPIENT COUNT
+========================================== */
 
-    function getRecipients() {
+function updateRecipientCount() {
 
-        const value =
-            recipientsBox.value
-                .replace(/[;,]/g, "\n");
+    const list =
+        getRecipients();
 
-        const items =
-            value
-                .split(/\s+/)
-                .map(item => item.trim())
-                .filter(Boolean);
+    const count =
+        list.length;
 
-        return [...new Set(items)];
-    }
+    recipientBadge.textContent =
+        `${count} Email${count === 1 ? "" : "s"}`;
+
+    totalCount.textContent =
+        count;
+
+    remainingCount.textContent =
+        count;
+
+    updateSendButton();
+}
 
 
-    function updateRecipientCount() {
+/* ==========================================
+   FORM VALIDATION
+========================================== */
 
-        const recipients =
-            getRecipients();
+function updateSendButton() {
 
-        emailBadge.textContent =
-            `${recipients.length} Emails`;
+    const hasEmail =
+        senderEmail.value.trim().length > 0;
 
-        totalElement.textContent =
-            recipients.length;
+    const hasPassword =
+        appPassword.value.replace(/\s/g, "").length >= 16;
 
-        remainingElement.textContent =
-            recipients.length;
+    const hasSubject =
+        subject.value.trim().length > 0;
 
-        if (!sendButton.disabled) {
+    const hasBody =
+        body.value.trim().length > 0;
 
-            sentElement.textContent = "0";
-            failedElement.textContent = "0";
+    const hasRecipients =
+        getRecipients().length > 0;
 
-            updateProgress(
-                0,
-                recipients.length
-            );
+    sendBtn.disabled =
+        !(
+            hasEmail &&
+            hasPassword &&
+            hasSubject &&
+            hasBody &&
+            hasRecipients
+        );
+}
+
+
+/* ==========================================
+   CHARACTER COUNT
+========================================== */
+
+function updateCharacterCount() {
+
+    const text =
+        body.value || "";
+
+    const characters =
+        text.length;
+
+    const lines =
+        text
+            ? text.split("\n").length
+            : 1;
+
+    characterCount.textContent =
+        `${characters} characters • ${lines} ${lines === 1 ? "line" : "lines"}`;
+
+    updateSendButton();
+}
+
+
+/* ==========================================
+   INPUT LISTENERS
+========================================== */
+
+recipients.addEventListener(
+    "input",
+    updateRecipientCount
+);
+
+senderEmail.addEventListener(
+    "input",
+    updateSendButton
+);
+
+appPassword.addEventListener(
+    "input",
+    updateSendButton
+);
+
+subject.addEventListener(
+    "input",
+    updateSendButton
+);
+
+body.addEventListener(
+    "input",
+    updateCharacterCount
+);
+
+
+/* ==========================================
+   PASSWORD VISIBILITY
+========================================== */
+
+togglePassword.addEventListener(
+    "click",
+    function() {
+
+        if (
+            appPassword.type === "password"
+        ) {
+
+            appPassword.type =
+                "text";
+
+            togglePassword.textContent =
+                "◉";
+
+        } else {
+
+            appPassword.type =
+                "password";
+
+            togglePassword.textContent =
+                "◉";
         }
+
     }
+);
 
 
-    /* =========================================
-       MESSAGE STATS
-    ========================================== */
+/* ==========================================
+   APP PASSWORD FORMAT
+========================================== */
 
-    function updateMessageStats() {
+appPassword.addEventListener(
+    "input",
+    function() {
 
-        const text =
-            bodyBox.value;
+        let value =
+            this.value
+                .replace(/\s/g, "")
+                .slice(0, 16);
 
-        const characters =
-            text.length;
+        let formatted =
+            value.match(/.{1,4}/g);
 
-        const lines =
-            text.length === 0
-                ? 1
-                : text.split("\n").length;
+        this.value =
+            formatted
+                ? formatted.join(" ")
+                : "";
 
-        messageStats.textContent =
-            `${characters} characters • ${lines} lines`;
+        updateSendButton();
     }
+);
 
 
-    /* =========================================
-       PROGRESS
-    ========================================== */
+/* ==========================================
+   GUIDE
+========================================== */
 
-    function updateProgress(
-        processed,
-        total
+guideBtn.addEventListener(
+    "click",
+    function() {
+
+        guideModal.classList.add(
+            "show"
+        );
+
+    }
+);
+
+closeGuide.addEventListener(
+    "click",
+    function() {
+
+        guideModal.classList.remove(
+            "show"
+        );
+
+    }
+);
+
+
+/* ==========================================
+   SAMPLE EMAILS
+========================================== */
+
+sampleBtn.addEventListener(
+    "click",
+    function() {
+
+        const samples = [];
+
+        for (
+            let i = 1;
+            i <= 25;
+            i++
+        ) {
+
+            samples.push(
+                `recipient${i}@example.com`
+            );
+
+        }
+
+        recipients.value =
+            samples.join("\n");
+
+        updateRecipientCount();
+
+    }
+);
+
+
+/* ==========================================
+   FONT BUTTONS
+========================================== */
+
+document
+    .querySelectorAll(".font-chip")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                document
+                    .querySelectorAll(".font-chip")
+                    .forEach(btn =>
+                        btn.classList.remove(
+                            "active"
+                        )
+                    );
+
+                this.classList.add(
+                    "active"
+                );
+
+                if (
+                    this.dataset.font ===
+                    "system"
+                ) {
+
+                    body.style.fontFamily =
+                        "Inter, Arial, sans-serif";
+
+                } else {
+
+                    body.style.fontFamily =
+                        "Georgia, serif";
+
+                }
+
+            }
+        );
+
+    });
+
+
+fontSelect.addEventListener(
+    "change",
+    function() {
+
+        if (this.value) {
+
+            body.style.fontFamily =
+                this.value;
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   RESET
+========================================== */
+
+resetBtn.addEventListener(
+    "click",
+    function() {
+
+        mailForm.reset();
+
+        recipients.value = "";
+
+        body.style.fontFamily =
+            "Inter, Arial, sans-serif";
+
+        sentCount.textContent =
+            "0";
+
+        failedCount.textContent =
+            "0";
+
+        totalCount.textContent =
+            "0";
+
+        remainingCount.textContent =
+            "0";
+
+        progressBar.style.width =
+            "0%";
+
+        statusText.textContent =
+            "Ready to send";
+
+        lastResult.textContent =
+            "Gmail SMTP";
+
+        liveLog.innerHTML =
+            "";
+
+        characterCount.textContent =
+            "0 characters • 1 line";
+
+        updateRecipientCount();
+
+    }
+);
+
+
+/* ==========================================
+   ADD LOG
+========================================== */
+
+function addLog(
+    recipient,
+    success,
+    message
+) {
+
+    const row =
+        document.createElement("div");
+
+    row.className =
+        success
+            ? "log-row success"
+            : "log-row failed";
+
+    row.innerHTML = `
+        <span>${success ? "✓" : "×"}</span>
+        <b>${escapeHtml(recipient)}</b>
+        <small>${escapeHtml(message)}</small>
+    `;
+
+    liveLog.prepend(row);
+
+    while (
+        liveLog.children.length > 8
     ) {
 
+        liveLog.removeChild(
+            liveLog.lastChild
+        );
+
+    }
+}
+
+
+/* ==========================================
+   HTML ESCAPE
+========================================== */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* ==========================================
+   SEND EMAILS
+========================================== */
+
+sendBtn.addEventListener(
+    "click",
+    async function() {
+
+        if (sendBtn.disabled) {
+            return;
+        }
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "sender_name",
+            senderName.value.trim()
+        );
+
+        formData.append(
+            "sender_email",
+            senderEmail.value.trim()
+        );
+
+        formData.append(
+            "app_password",
+            appPassword.value
+                .replace(/\s/g, "")
+        );
+
+        formData.append(
+            "subject",
+            subject.value.trim()
+        );
+
+        formData.append(
+            "body",
+            body.value
+        );
+
+        formData.append(
+            "recipients",
+            recipients.value
+        );
+
+
+        // UI state
+
+        sendBtn.disabled =
+            true;
+
+        sendBtn.classList.add(
+            "sending"
+        );
+
+        sendBtn.innerHTML =
+            "⏳ Sending Emails...";
+
+        liveLog.innerHTML =
+            "";
+
+        statusText.textContent =
+            "Starting...";
+
+        lastResult.textContent =
+            "Connecting";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/send-stream",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Server returned ${response.status}`
+                );
+
+            }
+
+
+            if (!response.body) {
+
+                throw new Error(
+                    "Streaming response is not supported."
+                );
+
+            }
+
+
+            const reader =
+                response.body.getReader();
+
+            const decoder =
+                new TextDecoder();
+
+            let buffer = "";
+
+
+            while (true) {
+
+                const {
+                    value,
+                    done
+                } =
+                    await reader.read();
+
+
+                if (done) {
+                    break;
+                }
+
+
+                buffer +=
+                    decoder.decode(
+                        value,
+                        {
+                            stream: true
+                        }
+                    );
+
+
+                const lines =
+                    buffer.split("\n");
+
+                buffer =
+                    lines.pop();
+
+
+                for (
+                    const line of lines
+                ) {
+
+                    if (!line.trim()) {
+                        continue;
+                    }
+
+
+                    let data;
+
+                    try {
+
+                        data =
+                            JSON.parse(line);
+
+                    } catch (error) {
+
+                        continue;
+
+                    }
+
+
+                    handleServerEvent(
+                        data
+                    );
+
+                }
+
+            }
+
+
+        } catch (error) {
+
+            statusText.textContent =
+                "Connection error";
+
+            lastResult.textContent =
+                error.message;
+
+            addLog(
+                "Server",
+                false,
+                error.message
+            );
+
+            sendBtn.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   HANDLE SERVER EVENTS
+========================================== */
+
+function handleServerEvent(data) {
+
+    if (
+        data.type ===
+        "start"
+    ) {
+
+        totalCount.textContent =
+            data.total;
+
+        sentCount.textContent =
+            "0";
+
+        failedCount.textContent =
+            "0";
+
+        remainingCount.textContent =
+            data.total;
+
+        progressBar.style.width =
+            "0%";
+
+        statusText.textContent =
+            data.message;
+
+        lastResult.textContent =
+            "Connecting";
+
+        return;
+    }
+
+
+    if (
+        data.type ===
+        "connected"
+    ) {
+
+        statusText.textContent =
+            data.message;
+
+        lastResult.textContent =
+            "Connected";
+
+        return;
+    }
+
+
+    if (
+        data.type ===
+        "progress"
+    ) {
+
+        totalCount.textContent =
+            data.total;
+
+        sentCount.textContent =
+            data.sent;
+
+        failedCount.textContent =
+            data.failed;
+
+        remainingCount.textContent =
+            data.remaining;
+
+        const completed =
+            data.sent +
+            data.failed;
+
         const percentage =
-            total > 0
-                ? Math.round(
-                    (processed / total) * 100
-                )
+            data.total > 0
+                ? (
+                    completed /
+                    data.total
+                ) * 100
                 : 0;
 
         progressBar.style.width =
             `${percentage}%`;
-    }
 
+        statusText.textContent =
+            data.success
+                ? `Sent: ${data.recipient}`
+                : `Failed: ${data.recipient}`;
 
-    function updateDashboard(item) {
+        lastResult.textContent =
+            data.message;
 
-        totalElement.textContent =
-            item.total ?? 0;
-
-        sentElement.textContent =
-            item.sent ?? 0;
-
-        failedElement.textContent =
-            item.failed ?? 0;
-
-        remainingElement.textContent =
-            item.remaining ?? 0;
-
-
-        const processed =
-            Number(item.sent ?? 0) +
-            Number(item.failed ?? 0);
-
-
-        updateProgress(
-            processed,
-            Number(item.total ?? 0)
+        addLog(
+            data.recipient,
+            data.success,
+            data.message
         );
 
-
-        if (item.message) {
-
-            if (item.recipient) {
-
-                statusText.textContent =
-                    `${item.message}: ${item.recipient}`;
-
-            } else {
-
-                statusText.textContent =
-                    item.message;
-            }
-        }
+        return;
     }
 
 
-    /* =========================================
-       SENDING STATE
-    ========================================== */
-
-    function setSendingState(
-        isSending
+    if (
+        data.type ===
+        "complete"
     ) {
 
-        sendButton.disabled =
-            isSending;
+        totalCount.textContent =
+            data.total;
 
-        sendButtonText.textContent =
-            isSending
-                ? "Sending..."
-                : "Send Bulk Emails";
+        sentCount.textContent =
+            data.sent;
 
+        failedCount.textContent =
+            data.failed;
 
-        document
-            .querySelectorAll(
-                "#mailForm input:not(#pdfFile), #mailForm textarea, #fontSelector"
-            )
-            .forEach(element => {
+        remainingCount.textContent =
+            "0";
 
-                element.disabled =
-                    isSending;
-            });
+        progressBar.style.width =
+            "100%";
 
+        statusText.textContent =
+            "Sending completed";
 
-        sampleBtn.disabled =
-            isSending;
+        lastResult.textContent =
+            `${data.sent} sent • ${data.failed} failed`;
 
-        resetBtn.disabled =
-            isSending;
-    }
-
-
-    /* =========================================
-       PASSWORD TOGGLE
-    ========================================== */
-
-    passwordToggle.addEventListener(
-        "click",
-        () => {
-
-            const hidden =
-                appPassword.type === "password";
-
-            appPassword.type =
-                hidden
-                    ? "text"
-                    : "password";
-
-            passwordToggle.textContent =
-                hidden
-                    ? "◌"
-                    : "◉";
-        }
-    );
-
-
-    /* =========================================
-       FONT SELECTION
-    ========================================== */
-
-    document
-        .querySelectorAll(".font-preset")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    document
-                        .querySelectorAll(".font-preset")
-                        .forEach(item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                        );
-
-                    button.classList.add(
-                        "active"
-                    );
-
-                    fontSelector.value =
-                        button.dataset.font;
-
-                    updateBodyFont();
-                }
-            );
-        });
-
-
-    function updateBodyFont() {
-
-        const option =
-            fontSelector.options[
-                fontSelector.selectedIndex
-            ];
-
-        const key =
-            option
-                ? option.value
-                : "system";
-
-        const fonts = {
-            system:
-                '"Segoe UI", Arial, sans-serif',
-
-            arial:
-                'Arial, Helvetica, sans-serif',
-
-            verdana:
-                'Verdana, Geneva, sans-serif',
-
-            tahoma:
-                'Tahoma, Geneva, sans-serif',
-
-            trebuchet:
-                '"Trebuchet MS", Arial, sans-serif',
-
-            georgia:
-                'Georgia, serif',
-
-            times:
-                '"Times New Roman", Times, serif',
-
-            courier:
-                '"Courier New", monospace',
-
-            lucida:
-                '"Lucida Sans Unicode", Arial, sans-serif',
-
-            palatino:
-                '"Palatino Linotype", Palatino, serif',
-
-            garamond:
-                'Garamond, Georgia, serif',
-
-            impact:
-                'Impact, sans-serif',
-
-            comic:
-                '"Comic Sans MS", cursive',
-
-            segoe:
-                '"Segoe UI", Arial, sans-serif',
-
-            calibri:
-                'Calibri, Arial, sans-serif',
-
-            cambria:
-                'Cambria, Georgia, serif',
-
-            consolas:
-                'Consolas, monospace',
-
-            century:
-                '"Century Gothic", Arial, sans-serif',
-
-            bookman:
-                '"Bookman Old Style", serif',
-
-            franklin:
-                '"Franklin Gothic Medium", Arial, sans-serif'
-        };
-
-        bodyBox.style.fontFamily =
-            fonts[key] || fonts.system;
-    }
-
-
-    fontSelector.addEventListener(
-        "change",
-        updateBodyFont
-    );
-
-
-    /* =========================================
-       FANCY FONT STYLIZER
-    ========================================== */
-
-    fancyFontBtn.addEventListener(
-        "click",
-        () => {
-
-            const current =
-                bodyBox.value;
-
-            if (!current.trim()) {
-
-                bodyBox.focus();
-
-                return;
-            }
-
-            /*
-             * Keep the actual email text intact.
-             * This only changes the textarea's visual
-             * font to a more decorative option.
-             */
-
-            const options = [
-                "Georgia",
-                "Trebuchet MS",
-                "Garamond",
-                "Cambria",
-                "Palatino Linotype"
-            ];
-
-            const random =
-                options[
-                    Math.floor(
-                        Math.random() *
-                        options.length
-                    )
-                ];
-
-            bodyBox.style.fontFamily =
-                `"${random}", serif`;
-        }
-    );
-
-
-    /* =========================================
-       RECIPIENT INPUT
-    ========================================== */
-
-    recipientsBox.addEventListener(
-        "input",
-        updateRecipientCount
-    );
-
-
-    bodyBox.addEventListener(
-        "input",
-        updateMessageStats
-    );
-
-
-    /* =========================================
-       SAMPLE EMAILS
-    ========================================== */
-
-    sampleBtn.addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/sample-emails"
-                    );
-
-                if (!response.ok) {
-                    throw new Error(
-                        "Sample emails load nahi hue."
-                    );
-                }
-
-                const data =
-                    await response.json();
-
-                recipientsBox.value =
-                    data.emails.join("\n");
-
-                updateRecipientCount();
-
-                statusText.textContent =
-                    "25 sample emails loaded.";
-
-            } catch (error) {
-
-                statusText.textContent =
-                    error.message;
-            }
-        }
-    );
-
-
-    /* =========================================
-       PDF SELECT
-    ========================================== */
-
-    pdfFile.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                pdfFile.files[0];
-
-            if (!file) {
-
-                pdfInfo.textContent =
-                    "No PDF attached";
-
-                previewPdfBtn.disabled =
-                    true;
-
-                removePdfBtn.disabled =
-                    true;
-
-                return;
-            }
-
-
-            if (
-                file.type !== "application/pdf" &&
-                !file.name.toLowerCase().endsWith(".pdf")
-            ) {
-
-                alert(
-                    "Please select a PDF file."
-                );
-
-                pdfFile.value = "";
-
-                return;
-            }
-
-
-            if (
-                file.size >
-                10 * 1024 * 1024
-            ) {
-
-                alert(
-                    "PDF maximum 10 MB ho sakti hai."
-                );
-
-                pdfFile.value = "";
-
-                return;
-            }
-
-
-            pdfInfo.textContent =
-                `${file.name} • ${formatFileSize(file.size)}`;
-
-            previewPdfBtn.disabled =
-                false;
-
-            removePdfBtn.disabled =
-                false;
-        }
-    );
-
-
-    function formatFileSize(bytes) {
-
-        if (bytes < 1024) {
-            return `${bytes} B`;
-        }
-
-        if (bytes < 1024 * 1024) {
-            return `${(
-                bytes / 1024
-            ).toFixed(1)} KB`;
-        }
-
-        return `${(
-            bytes /
-            (1024 * 1024)
-        ).toFixed(1)} MB`;
-    }
-
-
-    /* =========================================
-       PDF PREVIEW
-    ========================================== */
-
-    previewPdfBtn.addEventListener(
-        "click",
-        () => {
-
-            const file =
-                pdfFile.files[0];
-
-            if (!file) {
-                return;
-            }
-
-            if (currentPdfUrl) {
-
-                URL.revokeObjectURL(
-                    currentPdfUrl
-                );
-            }
-
-            currentPdfUrl =
-                URL.createObjectURL(file);
-
-            pdfFrame.src =
-                currentPdfUrl;
-
-            pdfModal.classList.add("show");
-
-            pdfModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-        }
-    );
-
-
-    removePdfBtn.addEventListener(
-        "click",
-        () => {
-
-            pdfFile.value = "";
-
-            pdfInfo.textContent =
-                "No PDF attached";
-
-            previewPdfBtn.disabled =
-                true;
-
-            removePdfBtn.disabled =
-                true;
-
-            if (currentPdfUrl) {
-
-                URL.revokeObjectURL(
-                    currentPdfUrl
-                );
-
-                currentPdfUrl = null;
-            }
-        }
-    );
-
-
-    /* =========================================
-       GUIDE MODAL
-    ========================================== */
-
-    function openGuide() {
-
-        guideModal.classList.add("show");
-
-        guideModal.setAttribute(
-            "aria-hidden",
-            "false"
+        sendBtn.classList.remove(
+            "sending"
         );
-    }
 
+        sendBtn.innerHTML =
+            "✓ Sending Completed";
 
-    function closeGuideModal() {
+        modalSent.textContent =
+            data.sent;
 
-        guideModal.classList.remove("show");
+        modalFailed.textContent =
+            data.failed;
 
-        guideModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-    }
+        completeMessage.textContent =
+            `Operation finished. ${data.sent} email(s) sent and ${data.failed} failed.`;
 
-
-    guideBtn.addEventListener(
-        "click",
-        openGuide
-    );
-
-    closeGuide.addEventListener(
-        "click",
-        closeGuideModal
-    );
-
-    closeGuideButton.addEventListener(
-        "click",
-        closeGuideModal
-    );
-
-
-    /* =========================================
-       COMPLETION MODAL
-    ========================================== */
-
-    function showCompletionModal(
-        message
-    ) {
-
-        modalMessage.textContent =
-            message;
-
-        completionModal.classList.add(
+        completeModal.classList.add(
             "show"
         );
 
-        completionModal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
+        return;
     }
 
 
-    closeModal.addEventListener(
-        "click",
-        () => {
-
-            completionModal.classList.remove(
-                "show"
-            );
-
-            completionModal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-        }
-    );
-
-
-    /* =========================================
-       PDF MODAL CLOSE
-    ========================================== */
-
-    closePdf.addEventListener(
-        "click",
-        () => {
-
-            pdfModal.classList.remove(
-                "show"
-            );
-
-            pdfModal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-        }
-    );
-
-
-    /* =========================================
-       RESET
-    ========================================== */
-
-    resetBtn.addEventListener(
-        "click",
-        () => {
-
-            form.reset();
-
-            recipientsBox.value = "";
-
-            totalElement.textContent = "0";
-            sentElement.textContent = "0";
-            failedElement.textContent = "0";
-            remainingElement.textContent = "0";
-
-            emailBadge.textContent =
-                "0 Emails";
-
-            progressBar.style.width =
-                "0%";
-
-            statusText.textContent =
-                "Ready to send";
-
-            pdfInfo.textContent =
-                "No PDF attached";
-
-            previewPdfBtn.disabled =
-                true;
-
-            removePdfBtn.disabled =
-                true;
-
-            messageStats.textContent =
-                "0 characters • 1 lines";
-
-            fontSelector.value =
-                "system";
-
-            bodyBox.style.fontFamily =
-                '"Segoe UI", Arial, sans-serif';
-
-            document
-                .querySelectorAll(".font-preset")
-                .forEach(item =>
-                    item.classList.remove(
-                        "active"
-                    )
-                );
-
-            const defaultFont =
-                document.querySelector(
-                    '.font-preset[data-font="system"]'
-                );
-
-            if (defaultFont) {
-                defaultFont.classList.add(
-                    "active"
-                );
-            }
-        }
-    );
-
-
-    /* =========================================
-       SUBMIT / SEND
-    ========================================== */
-
-    form.addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
-
-
-            if (!form.reportValidity()) {
-                return;
-            }
-
-
-            const recipients =
-                getRecipients();
-
-
-            if (
-                recipients.length === 0
-            ) {
-
-                statusText.textContent =
-                    "Please enter at least one recipient.";
-
-                return;
-            }
-
-
-            setSendingState(true);
-
-
-            sentElement.textContent =
-                "0";
-
-            failedElement.textContent =
-                "0";
-
-            totalElement.textContent =
-                recipients.length;
-
-            remainingElement.textContent =
-                recipients.length;
-
-
-            updateProgress(
-                0,
-                recipients.length
-            );
-
-
-            statusText.textContent =
-                "Connecting to Gmail server...";
-
-
-            try {
-
-                const formData =
-                    new FormData(form);
-
-
-                const response =
-                    await fetch(
-                        "/send-stream",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    );
-
-
-                if (
-                    !response.ok ||
-                    !response.body
-                ) {
-
-                    let errorMessage =
-                        "Server did not return a valid response.";
-
-                    try {
-
-                        const data =
-                            await response.json();
-
-                        if (data.error) {
-                            errorMessage =
-                                data.error;
-                        }
-
-                    } catch (_) {}
-
-                    throw new Error(
-                        errorMessage
-                    );
-                }
-
-
-                const reader =
-                    response.body.getReader();
-
-                const decoder =
-                    new TextDecoder("utf-8");
-
-                let buffer = "";
-
-                let finalResult = null;
-
-
-                while (true) {
-
-                    const {
-                        value,
-                        done
-                    } = await reader.read();
-
-
-                    buffer +=
-                        decoder.decode(
-                            value ||
-                            new Uint8Array(),
-                            {
-                                stream: !done
-                            }
-                        );
-
-
-                    const lines =
-                        buffer.split("\n");
-
-                    buffer =
-                        lines.pop() || "";
-
-
-                    for (
-                        const line of lines
-                    ) {
-
-                        if (!line.trim()) {
-                            continue;
-                        }
-
-
-                        const item =
-                            JSON.parse(line);
-
-
-                        updateDashboard(item);
-
-
-                        if (
-                            item.type ===
-                            "fatal"
-                        ) {
-
-                            throw new Error(
-                                item.message
-                            );
-                        }
-
-
-                        if (
-                            item.type ===
-                            "complete"
-                        ) {
-
-                            finalResult =
-                                item;
-                        }
-                    }
-
-
-                    if (done) {
-                        break;
-                    }
-                }
-
-
-                if (buffer.trim()) {
-
-                    const item =
-                        JSON.parse(buffer);
-
-                    updateDashboard(item);
-
-
-                    if (
-                        item.type ===
-                        "complete"
-                    ) {
-
-                        finalResult =
-                            item;
-                    }
-                }
-
-
-                const sent =
-                    finalResult?.sent ?? 0;
-
-                const failed =
-                    finalResult?.failed ?? 0;
-
-
-                statusText.textContent =
-                    `Completed: ${sent} sent, ${failed} failed`;
-
-
-                showCompletionModal(
-                    `${sent} email(s) sent and ${failed} failed.`
-                );
-
-
-            } catch (error) {
-
-                statusText.textContent =
-                    error.message ||
-                    "Sending failed.";
-
-
-                showCompletionModal(
-                    error.message ||
-                    "Email sending failed."
-                );
-
-
-            } finally {
-
-                setSendingState(
-                    false
-                );
-            }
-        }
-    );
-
-
-    /* =========================================
-       CLOSE MODALS ON BACKDROP
-    ========================================== */
-
-    [
-        guideModal,
-        completionModal,
-        pdfModal
-    ].forEach(modalElement => {
-
-        modalElement.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    modalElement
-                ) {
-
-                    modalElement.classList.remove(
-                        "show"
-                    );
-
-                    modalElement.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-                }
-            }
+    if (
+        data.type ===
+        "fatal"
+    ) {
+
+        statusText.textContent =
+            "Sending stopped";
+
+        lastResult.textContent =
+            data.message;
+
+        addLog(
+            "Server",
+            false,
+            data.message
         );
-    });
+
+        sendBtn.disabled =
+            false;
+
+        sendBtn.classList.remove(
+            "sending"
+        );
+
+        sendBtn.innerHTML =
+            "➤ Send Bulk Emails";
+
+    }
+
+}
 
 
-    /* =========================================
-       INITIAL STATE
-    ========================================== */
+/* ==========================================
+   COMPLETE MODAL
+========================================== */
 
-    updateRecipientCount();
+closeComplete.addEventListener(
+    "click",
+    function() {
 
-    updateMessageStats();
+        completeModal.classList.remove(
+            "show"
+        );
 
-    updateBodyFont();
+        sendBtn.disabled =
+            false;
+
+        sendBtn.classList.remove(
+            "sending"
+        );
+
+        sendBtn.innerHTML =
+            "➤ Send Bulk Emails";
+
+    }
+);
+
+
+/* ==========================================
+   CLOSE MODAL ON OUTSIDE CLICK
+========================================== */
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target ===
+            guideModal
+        ) {
+
+            guideModal.classList.remove(
+                "show"
+            );
+
+        }
+
+        if (
+            event.target ===
+            completeModal
+        ) {
+
+            completeModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   INITIAL STATE
+========================================== */
+
+updateRecipientCount();
+updateCharacterCount();
 
 </script>
 
 </body>
+
 </html>
