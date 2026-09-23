@@ -12,49 +12,91 @@ from email.utils import formataddr, formatdate, make_msgid
 app = Flask(__name__)
 
 
+# =========================================================
+# SETTINGS
+# =========================================================
+
+BATCH_SIZE = 5
+BATCH_DELAY = 2
+MESSAGE_DELAY = 0.5
+
+
+# =========================================================
+# EMAIL VALIDATION
+# =========================================================
+
 EMAIL_PATTERN = re.compile(
     r"^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@"
     r"[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$"
 )
 
 
-BATCH_SIZE = 5
-BATCH_DELAY = 2
-
-
 def is_valid_email(email):
     return EMAIL_PATTERN.fullmatch(email) is not None
 
 
+# =========================================================
+# RECIPIENT PARSER
+# =========================================================
+
 def parse_recipients(raw_value):
-    normalised = re.sub(r"[,;\s]+", "\n", raw_value)
+
+    normalised = re.sub(
+        r"[,;\s]+",
+        "\n",
+        raw_value
+    )
 
     recipients = []
     seen = set()
 
     for line in normalised.splitlines():
+
         email = line.strip().lower()
 
         if email and email not in seen:
+
             recipients.append(email)
             seen.add(email)
 
     return recipients
 
 
-def stream_event(payload):
-    return json.dumps(
-        payload,
-        ensure_ascii=False
-    ) + "\n"
+# =========================================================
+# STREAM EVENT
+# =========================================================
 
+def stream_event(payload):
+
+    return (
+        json.dumps(
+            payload,
+            ensure_ascii=False
+        )
+        + "\n"
+    )
+
+
+# =========================================================
+# HOME
+# =========================================================
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+
+    return render_template(
+        "index.html"
+    )
 
 
-@app.route("/send-stream", methods=["POST"])
+# =========================================================
+# SEND EMAIL STREAM
+# =========================================================
+
+@app.route(
+    "/send-stream",
+    methods=["POST"]
+)
 def send_stream():
 
     sender_name = request.form.get(
@@ -98,15 +140,16 @@ def send_stream():
 
         server = None
 
-        # -------------------------
+        # =================================================
         # VALIDATION
-        # -------------------------
+        # =================================================
 
         if not is_valid_email(sender_email):
 
             yield stream_event({
                 "type": "fatal",
-                "message": "Valid Gmail address enter karein."
+                "message":
+                    "Valid Gmail address enter karein."
             })
 
             return
@@ -115,7 +158,8 @@ def send_stream():
 
             yield stream_event({
                 "type": "fatal",
-                "message": "16-digit Google App Password required hai."
+                "message":
+                    "16-digit Google App Password required hai."
             })
 
             return
@@ -124,7 +168,8 @@ def send_stream():
 
             yield stream_event({
                 "type": "fatal",
-                "message": "Email Subject required hai."
+                "message":
+                    "Email Subject required hai."
             })
 
             return
@@ -133,7 +178,8 @@ def send_stream():
 
             yield stream_event({
                 "type": "fatal",
-                "message": "Message Body required hai."
+                "message":
+                    "Message Body required hai."
             })
 
             return
@@ -142,14 +188,19 @@ def send_stream():
 
             yield stream_event({
                 "type": "fatal",
-                "message": "Kam se kam ek recipient enter karein."
+                "message":
+                    "Kam se kam ek recipient enter karein."
             })
 
             return
 
-        # -------------------------
+        # =================================================
         # START
-        # -------------------------
+        # =================================================
+
+        total_batches = (
+            total + BATCH_SIZE - 1
+        ) // BATCH_SIZE
 
         yield stream_event({
             "type": "start",
@@ -158,10 +209,16 @@ def send_stream():
             "failed": 0,
             "remaining": total,
             "batch_size": BATCH_SIZE,
-            "message": f"{BATCH_SIZE} emails ke batches mein sending start ho rahi hai..."
+            "total_batches": total_batches,
+            "message":
+                f"Sending {BATCH_SIZE} emails per batch..."
         })
 
         try:
+
+            # =============================================
+            # SMTP CONNECTION
+            # =============================================
 
             tls_context = ssl.create_default_context()
 
@@ -190,12 +247,13 @@ def send_stream():
                 "sent": sent,
                 "failed": failed,
                 "remaining": total,
-                "message": "Gmail connected. Sending emails..."
+                "message":
+                    "Gmail connected. Emails send ho rahe hain..."
             })
 
-            # -------------------------
+            # =============================================
             # 5 EMAIL BATCHES
-            # -------------------------
+            # =============================================
 
             for batch_start in range(
                 0,
@@ -212,26 +270,30 @@ def send_stream():
                     batch_start // BATCH_SIZE
                 ) + 1
 
-                total_batches = (
-                    total + BATCH_SIZE - 1
-                ) // BATCH_SIZE
-
                 yield stream_event({
                     "type": "batch",
                     "batch": batch_number,
                     "total_batches": total_batches,
                     "batch_size": len(batch),
-                    "message": (
+                    "total": total,
+                    "sent": sent,
+                    "failed": failed,
+                    "remaining":
+                        total - sent - failed,
+                    "message":
                         f"Batch {batch_number}/{total_batches} "
                         f"send ho raha hai..."
-                    )
                 })
 
-                # -------------------------
-                # SEND CURRENT BATCH
-                # -------------------------
+                # =========================================
+                # CURRENT BATCH
+                # =========================================
 
                 for recipient in batch:
+
+                    # -------------------------------------
+                    # INVALID EMAIL
+                    # -------------------------------------
 
                     if not is_valid_email(recipient):
 
@@ -244,11 +306,17 @@ def send_stream():
                             "total": total,
                             "sent": sent,
                             "failed": failed,
-                            "remaining": total - sent - failed,
-                            "message": "Invalid email address"
+                            "remaining":
+                                total - sent - failed,
+                            "message":
+                                "Invalid email address"
                         })
 
                         continue
+
+                    # -------------------------------------
+                    # CREATE EMAIL
+                    # -------------------------------------
 
                     try:
 
@@ -258,10 +326,18 @@ def send_stream():
                             "utf-8"
                         )
 
-                        message["From"] = formataddr((
-                            sender_name,
-                            sender_email
-                        )) if sender_name else sender_email
+                        if sender_name:
+
+                            message["From"] = formataddr(
+                                (
+                                    sender_name,
+                                    sender_email
+                                )
+                            )
+
+                        else:
+
+                            message["From"] = sender_email
 
                         message["To"] = recipient
 
@@ -275,6 +351,10 @@ def send_stream():
 
                         message["Reply-To"] = sender_email
 
+                        # ---------------------------------
+                        # SEND
+                        # ---------------------------------
+
                         server.sendmail(
                             sender_email,
                             [recipient],
@@ -285,7 +365,9 @@ def send_stream():
 
                         success = True
 
-                        status_message = "Sent successfully"
+                        status_message = (
+                            "Sent successfully"
+                        )
 
                     except Exception as error:
 
@@ -297,6 +379,10 @@ def send_stream():
                             f"Failed: {error}"
                         )
 
+                    # -------------------------------------
+                    # PROGRESS
+                    # -------------------------------------
+
                     yield stream_event({
                         "type": "progress",
                         "recipient": recipient,
@@ -304,16 +390,19 @@ def send_stream():
                         "total": total,
                         "sent": sent,
                         "failed": failed,
-                        "remaining": total - sent - failed,
-                        "message": status_message
+                        "remaining":
+                            total - sent - failed,
+                        "message":
+                            status_message
                     })
 
-                    # Small delay between individual messages
-                    time.sleep(0.5)
+                    time.sleep(
+                        MESSAGE_DELAY
+                    )
 
-                # -------------------------
-                # BATCH DELAY
-                # -------------------------
+                # =========================================
+                # NEXT BATCH DELAY
+                # =========================================
 
                 if (
                     batch_start + BATCH_SIZE
@@ -325,18 +414,20 @@ def send_stream():
                         "total": total,
                         "sent": sent,
                         "failed": failed,
-                        "remaining": total - sent - failed,
-                        "message": (
+                        "remaining":
+                            total - sent - failed,
+                        "message":
                             f"Batch {batch_number} complete. "
-                            f"Next batch ke liye wait..."
-                        )
+                            "Next batch start ho raha hai..."
                     })
 
-                    time.sleep(BATCH_DELAY)
+                    time.sleep(
+                        BATCH_DELAY
+                    )
 
-            # -------------------------
+            # =============================================
             # COMPLETE
-            # -------------------------
+            # =============================================
 
             yield stream_event({
                 "type": "complete",
@@ -344,8 +435,13 @@ def send_stream():
                 "sent": sent,
                 "failed": failed,
                 "remaining": 0,
-                "message": "Sending completed"
+                "message":
+                    "Sending completed"
             })
+
+        # =================================================
+        # AUTH ERROR
+        # =================================================
 
         except smtplib.SMTPAuthenticationError:
 
@@ -354,13 +450,17 @@ def send_stream():
                 "total": total,
                 "sent": sent,
                 "failed": failed,
-                "remaining": total - sent - failed,
-                "message": (
+                "remaining":
+                    total - sent - failed,
+                "message":
                     "Gmail login failed. "
-                    "Gmail address aur 16-digit "
-                    "App Password check karein."
-                )
+                    "Gmail address aur "
+                    "16-digit App Password check karein."
             })
+
+        # =================================================
+        # SMTP ERROR
+        # =================================================
 
         except smtplib.SMTPException as error:
 
@@ -369,9 +469,15 @@ def send_stream():
                 "total": total,
                 "sent": sent,
                 "failed": failed,
-                "remaining": total - sent - failed,
-                "message": f"SMTP error: {error}"
+                "remaining":
+                    total - sent - failed,
+                "message":
+                    f"SMTP error: {error}"
             })
+
+        # =================================================
+        # GENERAL ERROR
+        # =================================================
 
         except Exception as error:
 
@@ -380,15 +486,22 @@ def send_stream():
                 "total": total,
                 "sent": sent,
                 "failed": failed,
-                "remaining": total - sent - failed,
-                "message": f"Connection error: {error}"
+                "remaining":
+                    total - sent - failed,
+                "message":
+                    f"Connection error: {error}"
             })
+
+        # =================================================
+        # CLOSE SMTP
+        # =================================================
 
         finally:
 
             if server is not None:
 
                 try:
+
                     server.quit()
 
                 except Exception:
@@ -400,14 +513,26 @@ def send_stream():
                         pass
 
     return Response(
-        stream_with_context(generate()),
-        content_type="application/x-ndjson; charset=utf-8",
+
+        stream_with_context(
+            generate()
+        ),
+
+        content_type=(
+            "application/x-ndjson; "
+            "charset=utf-8"
+        ),
+
         headers={
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no"
         }
     )
 
+
+# =========================================================
+# RUN
+# =========================================================
 
 if __name__ == "__main__":
 
